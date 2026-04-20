@@ -151,8 +151,6 @@ Comme il s'agit d'une règle d'intégrité explicite, elle doit être garantie a
 
 **Décision :** contrainte `UNIQUE` ajoutée sur `tools.name` dans `init.sql`.
 
-Une validation applicative est également conservée dans le service : un contrôle pré-insertion renvoie un `409 Conflict` propre avec un message clair, plutôt que de laisser Prisma remonter une erreur brute `P2002` (violation de contrainte d'unicité).
-
 ### 2. `tools.vendor` — NOT NULL (Règle métier)
 
 **CDC :** le champ vendor est obligatoire
@@ -163,7 +161,6 @@ Le CDC marque `vendor` comme obligatoire, mais le schéma original autorise les 
 
 **Décision :** contrainte `NOT NULL` ajoutée sur `tools.vendor` dans `init.sql`.
 
-La validation applicative (`@IsNotEmpty()` dans `CreateToolDto`) est également conservée comme première ligne de défense — elle permet de renvoyer un `400 Bad Request` propre avec un message clair au niveau du champ, plutôt que de laisser la base de données remonter une violation de contrainte brute.
 
 ### 3. `tools.active_users_count` — non utilisé, conservé dans le schéma (Valeur dérivée)
 
