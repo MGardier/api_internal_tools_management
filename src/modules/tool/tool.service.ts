@@ -20,7 +20,7 @@ export class ToolService {
     const [items, filtered, total] = await Promise.all([
       this.toolRepository.findMany(query),
       this.toolRepository.count(query),
-      this.toolRepository.count(),
+      this.toolRepository.countAll(),
     ]);
 
     return {
