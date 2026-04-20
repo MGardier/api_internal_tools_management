@@ -1,4 +1,3 @@
-import { SortOrder } from "../types/types";
+import { SortOrder } from '../types/types';
 
-
-export const SORT_ORDERS: SortOrder[] = ['asc', 'desc'];
+export const SORT_ORDERS: readonly SortOrder[] = ['asc', 'desc'];
