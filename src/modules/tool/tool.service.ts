@@ -1,10 +1,17 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { ToolRepository } from './tool.repository';
 import { QueryToolsDto } from './dto/query-tools.dto';
 import { ToolListItemDto } from './dto/tool-list-item.dto';
 import { ToolListResponseDto } from './dto/tool-list-response.dto';
+import { ToolDetailDto } from './dto/tool-detail.dto';
 import { FiltersAppliedDto } from './dto/filters-applied.dto';
-import { ToolWithListIncludes } from './types';
+import {
+  DateWindow,
+  ToolWithDetailIncludes,
+  ToolWithListIncludes,
+  UsageMetricsRaw,
+} from './types';
+
 
 @Injectable()
 export class ToolService {
@@ -35,8 +42,43 @@ export class ToolService {
   }
 
   // =============================================================================
+  //                          FIND ONE
+  // =============================================================================
+
+  async findOne(id: number): Promise<ToolDetailDto> {
+    const tool = await this.toolRepository.findById(id);
+
+    if (!tool) 
+      throw new NotFoundException({
+        error: 'Tool not found',
+        message: `Tool with ID ${id} does not exist`,
+      });
+    
+
+    const {since,until} = this.getDateWindow();
+    const usageMetrics = await this.toolRepository.getUsageMetrics(id, since,until);
+
+    return this.toDetail(tool, usageMetrics);
+  }
+
+  // =============================================================================
   //                            PRIVATE
   // =============================================================================
+
+
+
+  private getDateWindow(): DateWindow {
+    // TODO: TEMPORAIRE — remplacer par new Date() après tests
+    const today = new Date();
+    const since = new Date(today);
+    since.setDate(since.getDate() - 30);
+  return { since, until: today };
+}
+
+  private roundTo2Decimals(value: number): number {
+    return Math.round(value * 100) / 100;
+  }
+
 
   private buildFiltersApplied(query: QueryToolsDto): FiltersAppliedDto {
     const filters: FiltersAppliedDto = {};
@@ -48,9 +90,13 @@ export class ToolService {
     return filters;
   }
 
-  private toListItem(tool: ToolWithListIncludes): ToolListItemDto {
 
-    
+
+  // =============================================================================
+  //                        PRIVATE MAPPING
+  // =============================================================================
+
+  private toListItem(tool: ToolWithListIncludes): ToolListItemDto {
     return {
       id: tool.id,
       name: tool.name,
@@ -65,4 +111,35 @@ export class ToolService {
       created_at: tool.createdAt.toISOString(),
     };
   }
+
+    private toDetail(
+    tool: ToolWithDetailIncludes,
+    usageMetrics: UsageMetricsRaw,
+  ): ToolDetailDto {
+    const activeUsersCount = tool._count.userToolAccesses;
+    const monthlyCost = tool.monthlyCost.toNumber();
+
+    return {
+      id: tool.id,
+      name: tool.name,
+      description: tool.description,
+      vendor: tool.vendor,
+      website_url: tool.websiteUrl,
+      category: tool.category.name,
+      monthly_cost: monthlyCost,
+      owner_department: tool.ownerDepartment,
+      status: tool.status,
+      active_users_count: activeUsersCount,
+      total_monthly_cost: this.roundTo2Decimals(monthlyCost * activeUsersCount),
+      created_at: tool.createdAt.toISOString(),
+      updated_at: tool.updatedAt.toISOString(),
+      usage_metrics: {
+        last_30_days: {
+          total_sessions: usageMetrics._count.id,
+          avg_session_minutes: Math.round(usageMetrics._avg.usageMinutes ?? 0),
+        },
+      },
+    };
+  }
+
 }

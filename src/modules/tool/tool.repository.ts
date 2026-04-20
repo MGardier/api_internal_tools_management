@@ -2,8 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '@db/prisma.service';
 import { QueryToolsDto } from './dto/query-tools.dto';
-import { SORT_FIELD_MAP, TOOL_LIST_INCLUDE } from './constants';
-import { ToolWithListIncludes } from './types';
+import {
+  SORT_FIELD_MAP,
+  TOOL_DETAIL_INCLUDE,
+  TOOL_LIST_INCLUDE,
+} from './constants';
+import {
+  ToolWithDetailIncludes,
+  ToolWithListIncludes,
+  UsageMetricsRaw,
+} from './types';
 
 @Injectable()
 export class ToolRepository {
@@ -35,9 +43,31 @@ export class ToolRepository {
     return this.prisma.tool.count();
   }
 
-  count(query?: QueryToolsDto): Promise<number> {
+  count(query: QueryToolsDto): Promise<number> {
     const where = query ? this.buildWhere(query) : {};
     return this.prisma.tool.count({ where });
+  }
+
+  // =============================================================================
+  //                            FIND ONE
+  // =============================================================================
+
+  findById(id: number): Promise<ToolWithDetailIncludes | null> {
+    return this.prisma.tool.findUnique({
+      where: { id },
+      include: TOOL_DETAIL_INCLUDE,
+    });
+  }
+
+  getUsageMetrics(toolId: number, since: Date, until: Date): Promise<UsageMetricsRaw> {
+    return this.prisma.usageLog.aggregate({
+      where: {
+        toolId,
+        sessionDate: { gte: since, lte: until  },
+      },
+      _count: { id: true },
+      _avg: { usageMinutes: true },
+    });
   }
 
   // =============================================================================

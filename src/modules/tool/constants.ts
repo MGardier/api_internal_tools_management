@@ -20,3 +20,12 @@ export const TOOL_LIST_INCLUDE = {
     },
   },
 } satisfies Prisma.ToolInclude;
+
+export const TOOL_DETAIL_INCLUDE = {
+  category: true,
+  _count: {
+    select: {
+      userToolAccesses: { where: { status: 'active' as const } },
+    },
+  },
+} satisfies Prisma.ToolInclude;
