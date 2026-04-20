@@ -2,10 +2,8 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ToolRepository } from './tool.repository';
 import { QueryToolsDto } from './dto/query-tools.dto';
 import { ToolListItemDto } from './dto/tool-list-item.dto';
-import {
-  FiltersAppliedDto,
-  ToolListResponseDto,
-} from './dto/tool-list-response.dto';
+import { ToolListResponseDto } from './dto/tool-list-response.dto';
+import { FiltersAppliedDto } from './dto/filters-applied.dto';
 import { ToolWithListIncludes } from './types';
 
 @Injectable()
