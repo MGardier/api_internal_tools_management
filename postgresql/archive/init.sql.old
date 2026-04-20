@@ -72,9 +72,9 @@ CREATE TABLE categories (
 -- Tools (UPDATED: active_users_count added for Part 2 analytics)
 CREATE TABLE tools (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL UNIQUE,
+    name VARCHAR(100) NOT NULL,
     description TEXT,
-    vendor VARCHAR(100) NOT NULL,
+    vendor VARCHAR(100),
     website_url VARCHAR(255),
     category_id INTEGER NOT NULL,
     monthly_cost DECIMAL(10, 2) NOT NULL,
