@@ -3,7 +3,7 @@ import { ToolService } from './tool.service';
 import { QueryToolsDto } from './dto/query-tools.dto';
 import { ToolListResponseDto } from './dto/tool-list-response.dto';
 
-@Controller('api/tools')
+@Controller('tools')
 export class ToolController {
   constructor(private readonly toolService: ToolService) {}
 
