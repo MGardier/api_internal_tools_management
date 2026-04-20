@@ -1,0 +1,264 @@
+{
+  "info": {
+    "name": "Internal Tools Management API",
+    "description": "Collection for testing the Internal Tools Management API. Set the `baseUrl` collection variable to your running server (default: http://localhost:3000/api).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000/api",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Tools",
+      "description": "Endpoints for the tool catalog.",
+      "item": [
+        {
+          "name": "GET /tools - list all (defaults)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tools",
+              "host": ["{{baseUrl}}"],
+              "path": ["tools"]
+            },
+            "description": "List tools with default pagination (page=1, limit=20) and default sort (name asc)."
+          },
+          "response": []
+        },
+        {
+          "name": "GET /tools - filter by department",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tools?department=Engineering",
+              "host": ["{{baseUrl}}"],
+              "path": ["tools"],
+              "query": [
+                {
+                  "key": "department",
+                  "value": "Engineering",
+                  "description": "One of: Engineering, Sales, Marketing, HR, Finance, Operations, Design"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /tools - filter by status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tools?status=active",
+              "host": ["{{baseUrl}}"],
+              "path": ["tools"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "active",
+                  "description": "One of: active, deprecated, trial"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /tools - filter by category",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tools?category=Design",
+              "host": ["{{baseUrl}}"],
+              "path": ["tools"],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "Design"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /tools - filter by cost range",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tools?min_cost=10&max_cost=500",
+              "host": ["{{baseUrl}}"],
+              "path": ["tools"],
+              "query": [
+                { "key": "min_cost", "value": "10" },
+                { "key": "max_cost", "value": "500" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /tools - sort by cost desc",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tools?sort=cost&order=desc",
+              "host": ["{{baseUrl}}"],
+              "path": ["tools"],
+              "query": [
+                {
+                  "key": "sort",
+                  "value": "cost",
+                  "description": "One of: cost, name, date"
+                },
+                {
+                  "key": "order",
+                  "value": "desc",
+                  "description": "One of: asc, desc"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /tools - pagination (page 2, limit 5)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tools?page=2&limit=5",
+              "host": ["{{baseUrl}}"],
+              "path": ["tools"],
+              "query": [
+                { "key": "page", "value": "2" },
+                { "key": "limit", "value": "5" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /tools - combined filters",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tools?department=Engineering&status=active&min_cost=0&max_cost=1000&sort=cost&order=desc&page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["tools"],
+              "query": [
+                { "key": "department", "value": "Engineering" },
+                { "key": "status", "value": "active" },
+                { "key": "min_cost", "value": "0" },
+                { "key": "max_cost", "value": "1000" },
+                { "key": "sort", "value": "cost" },
+                { "key": "order", "value": "desc" },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" }
+              ]
+            },
+            "description": "All filters and options combined in a single request."
+          },
+          "response": []
+        },
+        {
+          "name": "GET /tools - 400 max_cost < min_cost",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tools?min_cost=500&max_cost=100",
+              "host": ["{{baseUrl}}"],
+              "path": ["tools"],
+              "query": [
+                { "key": "min_cost", "value": "500" },
+                { "key": "max_cost", "value": "100" }
+              ]
+            },
+            "description": "Expects a 400 Bad Request: max_cost must be >= min_cost."
+          },
+          "response": []
+        },
+        {
+          "name": "GET /tools - 400 invalid enum",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tools?department=Unknown",
+              "host": ["{{baseUrl}}"],
+              "path": ["tools"],
+              "query": [
+                { "key": "department", "value": "Unknown" }
+              ]
+            },
+            "description": "Expects a 400 Bad Request: department is not a valid enum value."
+          },
+          "response": []
+        },
+        {
+          "name": "GET /tools - 400 unknown param",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tools?foo=bar",
+              "host": ["{{baseUrl}}"],
+              "path": ["tools"],
+              "query": [
+                { "key": "foo", "value": "bar" }
+              ]
+            },
+            "description": "Expects a 400 Bad Request: unknown query parameter (forbidNonWhitelisted)."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Docs",
+      "description": "Swagger / OpenAPI references.",
+      "item": [
+        {
+          "name": "GET /docs - Swagger UI",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/docs",
+              "host": ["{{baseUrl}}"],
+              "path": ["docs"]
+            },
+            "description": "Open the Swagger UI in your browser."
+          },
+          "response": []
+        },
+        {
+          "name": "GET /docs-json - OpenAPI spec",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/docs-json",
+              "host": ["{{baseUrl}}"],
+              "path": ["docs-json"]
+            },
+            "description": "Raw OpenAPI JSON spec."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
