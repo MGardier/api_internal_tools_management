@@ -190,3 +190,45 @@ Le `total_monthly_cost` peut être directement dérivé comme `monthly_cost × a
 **Décision :** `total_monthly_cost` est calculé à la volée dans la couche service, en cohérence avec le choix fait pour `active_users_count`. La table `cost_tracking` est hors scope pour cette API.
 
 **Hypothèse :** ce calcul présume un pricing linéaire par utilisateur. Si le métier introduit des remises par volume, des paliers négociés, ou d'autres règles de tarification non linéaires, l'API devra lire depuis `cost_tracking` (ou une table de pricing dédiée) au lieu de calculer la valeur. Ce compromis est acceptable dans le scope actuel du CDC.
+
+
+## Choix d'implémentation — Métriques d'usage
+
+### 1. Visibilité des métriques — suivre le CDC strictement
+
+**CDC :** la user story de Sarah Chen mentionne "visualiser les métriques d'usage par outil", mais les métriques (`usage_metrics.last_30_days`) ne sont spécifiées que dans la réponse de l'endpoint de détail (`GET /api/tools/:id`), pas dans la réponse de liste.
+
+**Ambiguïté :** la formulation de la user story suggère un besoin orienté listing (vue d'ensemble pour comparer et prioriser), mais la spec technique restreint les métriques au détail. En pratique, obliger Sarah à cliquer sur chaque outil individuellement pour consulter les métriques est peu ergonomique pour son cas d'usage (optimisation des coûts à l'échelle du portefeuille).
+
+**Décision :** implémentation stricte du CDC. Les métriques sont exposées uniquement dans `GET /api/tools/:id`.
+
+**Évolution possible à valider avec le Product Owner :**
+- Ajouter un champ `usage_metrics` allégé dans la réponse de liste, ou
+- Créer un endpoint dédié agrégé (ex. `GET /api/metrics/tools`) optimisé pour le cas d'usage dashboard.
+
+Cette limitation est volontairement conservée pour respecter le contrat d'API, mais mérite une clarification métier.
+
+### 2. `total_sessions` — compte brut des logs d'usage
+
+**CDC :** l'exemple de réponse indique `"total_sessions": 127` pour Confluence, qui a 9 utilisateurs actifs.
+
+**Interprétations possibles :**
+- `COUNT(*)` sur `usage_logs` (toutes les lignes, chaque log = une session)
+- `COUNT(DISTINCT user_id, session_date)` (jours actifs cumulés par utilisateur)
+- `COUNT(DISTINCT session_date)` (jours d'activité de l'outil, tous users confondus)
+
+**Décision :** `total_sessions = COUNT(*)` sur `usage_logs` filtrés par `tool_id` et `session_date` dans la fenêtre des 30 derniers jours.
+
+**Justification :** la valeur d'exemple (127 sessions pour 9 utilisateurs sur 30 jours, soit environ 14 sessions par utilisateur, ~1 session tous les 2 jours) est cohérente avec une activité brute, et incohérente avec des agrégations par jour distinct. Cette interprétation est également la plus simple, la plus intuitive pour un consommateur de l'API (une session = un log), et la moins coûteuse à calculer.
+
+### 3. `last_30_days` — fenêtre fixe glissante, non paramétrable
+
+**CDC :** la réponse utilise la clé littérale `usage_metrics.last_30_days`, ce qui implique une fenêtre temporelle figée à 30 jours glissants à partir d'aujourd'hui.
+
+**Décision :** fenêtre calculée comme `session_date >= CURRENT_DATE - INTERVAL '30 days'`, non paramétrable via query params.
+
+**Justification :** exposer des paramètres de fenêtre temporelle personnalisables (`?from=X&to=Y`) romprait le contrat de réponse — la clé `last_30_days` deviendrait mensongère dès qu'une période différente serait demandée, et renommer dynamiquement la clé selon les paramètres rendrait le client difficile à écrire. Le détail d'un outil est par nature un **snapshot instantané** ; les analyses sur des périodes variables relèvent d'un endpoint analytique dédié (hors scope du CDC actuel).
+
+**Limitation connue sur le dataset fourni :** les logs d'usage seedés sont datés de mai à juillet 2025. Testé après le 30 août 2025, la fenêtre glissante 30 jours ne contiendra plus de logs et toutes les métriques retourneront 0. Ce comportement est cohérent avec l'implémentation correcte de la fenêtre ; il ne reflète pas un bug. Pour tester les métriques avec le seed actuel, il faut soit simuler la date système, soit régénérer des logs avec des dates récentes.
+
+**Évolution possible :** un endpoint dédié aux analyses temporelles (ex. `GET /api/tools/:id/usage?from=X&to=Y`) serait pertinent pour couvrir le besoin de reporting trimestriel évoqué par Marcus (Finance Controller) dans les personas.
