@@ -4,7 +4,7 @@ export class ToolListItemDto {
   id: number;
   name: string;
   description: string | null;
-  vendor: string ;
+  vendor: string;
   category: string;
   monthly_cost: number;
   owner_department: DepartmentType;

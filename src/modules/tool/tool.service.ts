@@ -52,10 +52,6 @@ export class ToolService {
 
   private toListItem(tool: ToolWithListIncludes): ToolListItemDto {
 
-    if (tool.status === null || tool.createdAt === null) 
-      throw new InternalServerErrorException(
-        `Tool ${tool.id} is missing required fields (status or created_at)`,
-      );
     
     return {
       id: tool.id,

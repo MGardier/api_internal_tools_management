@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { validateEnv } from './app/config/env.validation';
-import { PrismaModule } from 'prisma/prisma.module';
-import { ToolModule } from './modules/tool/tool.module';
+import { validateEnv } from '@app/config/env.validation';
+import { PrismaModule } from '@db/prisma.module';
+import { ToolModule } from '@modules/tool/tool.module';
 
 @Module({
   imports: [

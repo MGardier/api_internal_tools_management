@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { PrismaService } from 'prisma/prisma.service';
+import { PrismaService } from '@db/prisma.service';
 import { QueryToolsDto } from './dto/query-tools.dto';
 import { SORT_FIELD_MAP, TOOL_LIST_INCLUDE } from './constants';
 import { ToolWithListIncludes } from './types';

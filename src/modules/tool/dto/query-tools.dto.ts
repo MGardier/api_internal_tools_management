@@ -10,11 +10,11 @@ import {
   Min,
 } from 'class-validator';
 import { DepartmentType, ToolStatusType } from '@prisma/client';
-import { IsGreaterThanOrEqual } from '../../../app/validators/is-greater-than-or-equal.validator';
+import { IsGreaterThanOrEqual } from '@app/validators/is-greater-than-or-equal.validator';
 import { ToolSortField } from '../types';
 import { SORT_FIELDS } from '../constants';
-import { SORT_ORDERS } from 'src/shared/constants/constants';
-import { SortOrder } from 'src/shared/types/types';
+import { SORT_ORDERS } from '@shared/constants/constants';
+import { SortOrder } from '@shared/types/types';
 
 export class QueryToolsDto {
   @IsOptional()

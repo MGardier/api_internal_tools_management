@@ -1,13 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
-import {
-  BadRequestException,
-  ValidationPipe,
-} from '@nestjs/common';
+import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
-import type { EnvConfig } from './app/config/env.schema';
-import { HttpExceptionFilter } from './app/filters/http-exception.filter';
-import { flattenValidationErrors } from './shared/utils/utils';
+import type { EnvConfig } from '@app/config/env.schema';
+import { HttpExceptionFilter } from '@app/filters/http-exception.filter';
+import { flattenValidationErrors } from '@shared/utils/utils';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
