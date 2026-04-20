@@ -4,6 +4,7 @@ export const envSchema = z.object({
   // HTTP
   PORT: z.coerce.number().default(3000),
   NODE_ENV: z.enum(['dev', 'prod', 'test']).default('dev'),
+  LOG_FORMAT: z.enum(['json', 'visual', 'both']).default('visual'),
 
   /* #################### DATABASE ########################### */
 
