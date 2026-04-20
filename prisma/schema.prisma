@@ -67,7 +67,7 @@ model Tool {
   ownerDepartment  DepartmentType   @map("owner_department")
   status           ToolStatusType   @default(active)
   createdAt        DateTime         @default(now()) @map("created_at") @db.Timestamp(6)
-  updatedAt        DateTime?        @default(now()) @map("updated_at") @db.Timestamp(6)
+  updatedAt        DateTime         @default(now()) @map("updated_at") @db.Timestamp(6)
   accessRequests   AccessRequest[]
   costTracking     CostTracking[]
   category         Category         @relation(fields: [categoryId], references: [id], onUpdate: NoAction)
@@ -130,7 +130,7 @@ model User {
   status                  UserStatusType?  @default(active)
   hireDate                DateTime?        @map("hire_date") @db.Date
   createdAt               DateTime         @default(now()) @map("created_at") @db.Timestamp(6)
-  updatedAt               DateTime?        @default(now()) @map("updated_at") @db.Timestamp(6)
+  updatedAt               DateTime         @default(now()) @map("updated_at") @db.Timestamp(6)
   accessRequestsProcessed AccessRequest[]  @relation("AccessRequestProcessedBy")
   accessRequests          AccessRequest[]  @relation("AccessRequestUser")
   usageLogs               UsageLog[]

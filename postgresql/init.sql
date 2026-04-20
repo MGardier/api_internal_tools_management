@@ -82,7 +82,7 @@ CREATE TABLE tools (
     owner_department department_type NOT NULL,
     status tool_status_type NOT NULL DEFAULT 'active',
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (category_id) REFERENCES categories (id) ON DELETE RESTRICT
 );
 
@@ -109,7 +109,7 @@ CREATE TABLE users (
     status user_status_type DEFAULT 'active',
     hire_date DATE,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Apply trigger to users table
