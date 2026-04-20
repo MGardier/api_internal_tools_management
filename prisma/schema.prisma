@@ -57,9 +57,9 @@ model CostTracking {
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model Tool {
   id               Int              @id @default(autoincrement())
-  name             String           @unique @db.VarChar(100)
+  name             String           @db.VarChar(100)
   description      String?
-  vendor           String           @db.VarChar(100)
+  vendor           String?          @db.VarChar(100)
   websiteUrl       String?          @map("website_url") @db.VarChar(255)
   categoryId       Int              @map("category_id")
   monthlyCost      Decimal          @map("monthly_cost") @db.Decimal(10, 2)

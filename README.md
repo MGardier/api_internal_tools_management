@@ -33,9 +33,9 @@ pnpm install
 ### 3. Configurer Prisma
 
 ```bash
-npx prisma db pull    # regénère schema.prisma depuis la DB
+pnpm prisma db pull    # regénère schema.prisma depuis la DB
 
-npx prisma generate   # regénère le client typé
+pnpm prisma generate   # regénère le client typé
 ```
 
 ### 4. Lancer le serveur
@@ -121,8 +121,9 @@ postgresql://dev:dev123@localhost:5432/internal_tools
 La source de vérité du schéma de base de données est le script SQL (`init.sql`), et non le schéma Prisma. Prisma est utilisé comme query builder typé et reste synchronisé via introspection :
 
 ```bash
-npx prisma db pull    # regénère schema.prisma depuis la DB
-npx prisma generate   # regénère le client typé
+
+pnpm prisma db pull    # regénère schema.prisma depuis la DB
+pnpm prisma generate   # regénère le client typé
 ```
 
 Aucune commande `prisma migrate` n'est utilisée — toute modification du schéma se fait d'abord dans `init.sql`, puis par ré-introspection.
