@@ -66,7 +66,7 @@ CREATE TABLE categories (
     name VARCHAR(50) NOT NULL UNIQUE,
     description TEXT,
     color_hex VARCHAR(7) DEFAULT '#6366f1',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Tools (UPDATED: active_users_count added for Part 2 analytics)
@@ -80,8 +80,8 @@ CREATE TABLE tools (
     monthly_cost DECIMAL(10, 2) NOT NULL,
     active_users_count INTEGER NOT NULL DEFAULT 0,
     owner_department department_type NOT NULL,
-    status tool_status_type DEFAULT 'active',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status tool_status_type NOT NULL DEFAULT 'active',
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (category_id) REFERENCES categories (id) ON DELETE RESTRICT
 );
@@ -108,7 +108,7 @@ CREATE TABLE users (
     role user_role_type DEFAULT 'employee',
     status user_status_type DEFAULT 'active',
     hire_date DATE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -157,7 +157,7 @@ CREATE TABLE usage_logs (
     session_date DATE NOT NULL,
     usage_minutes INTEGER DEFAULT 0,
     actions_count INTEGER DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
     FOREIGN KEY (tool_id) REFERENCES tools (id) ON DELETE CASCADE
 );
@@ -169,7 +169,7 @@ CREATE TABLE cost_tracking (
     month_year DATE NOT NULL,
     total_monthly_cost DECIMAL(10, 2) NOT NULL,
     active_users_count INTEGER NOT NULL DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UNIQUE (tool_id, month_year),
     FOREIGN KEY (tool_id) REFERENCES tools (id) ON DELETE CASCADE
 );

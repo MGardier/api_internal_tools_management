@@ -33,7 +33,7 @@ model Category {
   name        String    @unique @db.VarChar(50)
   description String?
   colorHex    String?   @default("#6366f1") @map("color_hex") @db.VarChar(7)
-  createdAt   DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
   tools       Tool[]
 
   @@map("categories")
@@ -46,7 +46,7 @@ model CostTracking {
   monthYear        DateTime  @map("month_year") @db.Date
   totalMonthlyCost Decimal   @map("total_monthly_cost") @db.Decimal(10, 2)
   activeUsersCount Int       @default(0) @map("active_users_count")
-  createdAt        DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
   tool             Tool      @relation(fields: [toolId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@unique([toolId, monthYear])
@@ -65,8 +65,8 @@ model Tool {
   monthlyCost      Decimal          @map("monthly_cost") @db.Decimal(10, 2)
   activeUsersCount Int              @default(0) @map("active_users_count")
   ownerDepartment  DepartmentType   @map("owner_department")
-  status           ToolStatusType?  @default(active)
-  createdAt        DateTime?        @default(now()) @map("created_at") @db.Timestamp(6)
+  status           ToolStatusType   @default(active)
+  createdAt        DateTime         @default(now()) @map("created_at") @db.Timestamp(6)
   updatedAt        DateTime?        @default(now()) @map("updated_at") @db.Timestamp(6)
   accessRequests   AccessRequest[]
   costTracking     CostTracking[]
@@ -89,7 +89,7 @@ model UsageLog {
   sessionDate  DateTime  @map("session_date") @db.Date
   usageMinutes Int?      @default(0) @map("usage_minutes")
   actionsCount Int?      @default(0) @map("actions_count")
-  createdAt    DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
   tool         Tool      @relation(fields: [toolId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   user         User      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
@@ -129,7 +129,7 @@ model User {
   role                    UserRoleType?    @default(employee)
   status                  UserStatusType?  @default(active)
   hireDate                DateTime?        @map("hire_date") @db.Date
-  createdAt               DateTime?        @default(now()) @map("created_at") @db.Timestamp(6)
+  createdAt               DateTime         @default(now()) @map("created_at") @db.Timestamp(6)
   updatedAt               DateTime?        @default(now()) @map("updated_at") @db.Timestamp(6)
   accessRequestsProcessed AccessRequest[]  @relation("AccessRequestProcessedBy")
   accessRequests          AccessRequest[]  @relation("AccessRequestUser")
