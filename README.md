@@ -1,105 +1,133 @@
 # Internal Tools API
 
+API de gestion des outils internes d'une entreprise (catalogue, accès utilisateurs, suivi des coûts et de l'usage).
+
 ## Technologies
-- Langage: Javascript/Typescript
-- Framework: Nest.js 
-- Base de données: PostgreSQL 
-- Port API: [votre_port] (configurable)
+
+- **Langage :** TypeScript
+- **Framework :** NestJS 11
+- **Base de données :** PostgreSQL 15
+- **ORM :** Prisma 6
+- **Gestionnaire de paquets :** pnpm
+- **Conteneurisation :** Docker Compose
+- **Port API :** `3000` (configurable via la variable d'environnement `PORT`)
 
 ## Quick Start
 
-1. `docker-compose --profile mysql up -d` # ou postgres
+### 1. Démarrer la base de données
 
-2. [commandes_installation_dependances]
-3. [commande_demarrage_serveur]
-4. API disponible sur http://localhost:[port]
-5. Documentation: http://localhost:[port]/[chemin_docs]
+```bash
+docker compose --profile postgres up -d
+```
+
+Cette commande lance :
+- **PostgreSQL** sur `localhost:5432`
+- **pgAdmin** sur [http://localhost:8081](http://localhost:8081)
+
+### 2. Installer les dépendances
+
+```bash
+pnpm install
+```
+
+### 3. Configurer Prisma
+
+```bash
+# Générer le client Prisma
+pnpm prisma generate
+
+# Appliquer les migrations (environnement de dev)
+pnpm prisma migrate dev
+
+```
+
+### 4. Lancer le serveur
+
+```bash
+# Mode développement (watch)
+pnpm start:dev
+
+# Mode production
+pnpm build && pnpm start:prod
+```
+
+### 5. Accéder à l'API
+
+- **API :** [http://localhost:3000](http://localhost:3000)
+- **Documentation :** à venir (Swagger/OpenAPI non encore implémenté)
 
 ## Configuration
-- Variables d'environnement: voir .env.example
-- Configuration DB: [instructions_connexion]
 
-## Tests  
-[commande_lancement_tests] - Tests unitaires + intégration
+- Les variables d'environnement sont définies dans `.env` (voir `.env.local` pour un exemple).
+- Variables principales attendues :
+  - `PORT` : port d'écoute de l'API
+  - `DATABASE_URL` : chaîne de connexion PostgreSQL utilisée par Prisma
+  - `POSTGRES_DATABASE`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_PORT` : configuration du conteneur PostgreSQL
+  - `PGADMIN_EMAIL`, `PGADMIN_PASSWORD`, `PGADMIN_PORT` : configuration de pgAdmin
+
+## Tests
+
+```bash
+# Tests unitaires
+pnpm test
+
+# Tests unitaires en watch
+pnpm test:watch
+
+# Couverture
+pnpm test:cov
+
+# Tests end-to-end
+pnpm test:e2e
+```
 
 ## Architecture
-- [Justification_choix_tech]
-- [Structure_projet_expliquee]
 
-# 🗄️ Internal Tools Database - Quick Setup
+### Choix techniques
 
-Ready-to-use database environment for API development tests.
+- **NestJS** pour sa structure modulaire, son système d'injection de dépendances et son écosystème adapté aux API d'entreprise.
+- **PostgreSQL** pour la fiabilité transactionnelle, le typage fort (enums natifs utilisés dans le schéma) et les contraintes de cohérence nécessaires à la gestion d'accès et au suivi des coûts.
+- **Prisma** comme ORM pour un typage TypeScript de bout en bout, des migrations versionnées et un modèle de données lisible.
+- **pnpm** pour la rapidité d'installation et l'économie d'espace disque.
+- **Docker Compose** pour un environnement de dev reproductible (PostgreSQL + pgAdmin prêts en une commande).
 
-### Option 2: PostgreSQL + pgAdmin 
-```bash
-# Method 1: Script (recommended)
-chmod +x start-postgres.sh && ./start-postgres.sh
+### Structure du projet
 
-# Method 2: Direct command  
-docker-compose --profile postgres up -d
+Architecture **modulaire par feature** (NestJS) personnalisée :
+
+```
+src/
+├── app/        # Configuration et paramétrage de l'application (bootstrap, config globale)
+├── shared/     # Code partagé entre modules (utilitaires, guards, pipes, decorators, types communs)
+├── modules/    # Un dossier par feature métier (tools, users, access, usage, costs, ...)
+├── main.ts     # Point d'entrée de l'application
+└── app.module.ts
 ```
 
-**Access in 30 seconds:**
-- 🗄️ **PostgreSQL:** `localhost:5432` 
-- 🌐 **pgAdmin:** http://localhost:8081
-- 👤 **Credentials:** `dev / dev123`
-- 📊 **Database:** `internal_tools`
+Chaque module dans `modules/` encapsule sa propre logique (controller, service, DTOs, entités) afin de garder un couplage faible entre les features et de faciliter les évolutions indépendantes.
 
-### Option 3: Both Databases (Testing)
+## Commandes utiles
+
 ```bash
-docker-compose --profile all up -d
+# Arrêter les conteneurs
+docker compose --profile postgres down
+
+# Voir les logs PostgreSQL
+docker compose logs -f postgres
+
+# Linter
+pnpm lint
+
+# Formatter
+pnpm format
 ```
 
+## Connexion à la base
 
-
-## 🛠️ Quick Commands
-
-```bash
-# Test connections
-./test-connections.sh
-
-# Stop everything
-docker-compose --profile all down
-
-# Reset all data (⚠️ destructive)
-./reset-all.sh
-
-# View logs
-docker-compose logs -f mysql     # or postgres
 ```
-
-## 📊 Connection Strings
-
-```bash
-# MySQL
-mysql://dev:dev123@localhost:3306/internal_tools
-"mysql:host=localhost;port=3306;dbname=internal_tools"
-
-# PostgreSQL  
 postgresql://dev:dev123@localhost:5432/internal_tools
-"pgsql:host=localhost;port=5432;dbname=internal_tools"
 ```
 
----
-
-## **⚡ COMMANDES  FINALES**
-
-### **🐬 Pour MySQL **
-```bash
-docker-compose --profile mysql up -d
-# ✅ MySQL + phpMyAdmin prêts !
-# 🌐 Interface: http://localhost:8080
-```
-
-### **🐘 Pour PostgreSQL **  
-```bash
-docker-compose --profile postgres up -d
-# ✅ PostgreSQL + pgAdmin prêts !
-# 🌐 Interface: http://localhost:8081
-```
-
-### **🎯 Pour Tests Comparatifs**
-```bash
-docker-compose --profile all up -d  
-# ✅ Les deux bases + interfaces prêtes !
-```
+- **pgAdmin :** [http://localhost:8081](http://localhost:8081)
+- **Identifiants par défaut :** `dev / dev123`
+- **Base :** `internal_tools`
