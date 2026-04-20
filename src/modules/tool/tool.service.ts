@@ -68,7 +68,6 @@ export class ToolService {
 
 
   private getDateWindow(): DateWindow {
-    // TODO: TEMPORAIRE — remplacer par new Date() après tests
     const today = new Date();
     const since = new Date(today);
     since.setDate(since.getDate() - 30);
