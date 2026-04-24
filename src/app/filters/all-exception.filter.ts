@@ -124,7 +124,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     );
 
     const isProd =
-      this.configService.get('NODE_ENV', { infer: true }) === 'prod';
+      this.configService.get('NODE_ENV', { infer: true }) === 'production';
 
     response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
       error: 'Internal server error',
