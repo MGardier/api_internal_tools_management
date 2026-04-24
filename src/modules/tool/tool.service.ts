@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ToolRepository } from './tool.repository';
-import { QueryToolsDto } from './dto/query-tools.dto';
-import { ToolListItemDto } from './dto/tool-list-item.dto';
-import { ToolListResponseDto } from './dto/tool-list-response.dto';
-import { ToolDetailDto } from './dto/tool-detail.dto';
-import { FiltersAppliedDto } from './dto/filters-applied.dto';
+import { QueryToolsDto } from './dto/requests/query-tools.request.dto';
+import { ToolListItemDto } from './dto/responses/tool-list-item.response.dto';
+import { ToolListResponseDto } from './dto/responses/tool-list.response.dto';
+import { ToolDetailDto } from './dto/responses/tool-detail.response.dto';
+import { FiltersAppliedDto } from './dto/responses/filters-applied.response.dto';
 import {
   DateWindow,
   ToolWithDetailIncludes,

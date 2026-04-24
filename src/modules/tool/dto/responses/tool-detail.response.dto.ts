@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { DepartmentType, ToolStatusType } from '@prisma/client';
-import { UsageMetricsDto } from './usage-metrics.dto';
+import { UsageMetricsDto } from './usage-metrics.response.dto';
 
 export class ToolDetailDto {
   @ApiProperty({ example: 5 })

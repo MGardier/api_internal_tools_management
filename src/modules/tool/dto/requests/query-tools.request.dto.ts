@@ -12,8 +12,8 @@ import {
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { DepartmentType, ToolStatusType } from '@prisma/client';
 import { IsGreaterThanOrEqual } from '@app/validators/is-greater-than-or-equal.validator';
-import { ToolSortField } from '../types';
-import { SORT_FIELDS } from '../constants';
+import { ToolSortField } from '../../types';
+import { SORT_FIELDS } from '../../constants';
 import { SORT_ORDERS } from '@shared/constants/constants';
 import { SortOrder } from '@shared/types/types';
 

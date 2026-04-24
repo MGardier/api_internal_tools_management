@@ -9,11 +9,11 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { ToolService } from './tool.service';
-import { QueryToolsDto } from './dto/query-tools.dto';
-import { ToolListResponseDto } from './dto/tool-list-response.dto';
-import { ToolDetailDto } from './dto/tool-detail.dto';
-import { ValidationErrorResponseDto } from '@shared/dto/validation-error-response.dto';
-import { ErrorResponseDto } from '@shared/dto/error-response.dto';
+import { QueryToolsDto } from './dto/requests/query-tools.request.dto';
+import { ToolListResponseDto } from './dto/responses/tool-list.response.dto';
+import { ToolDetailDto } from './dto/responses/tool-detail.response.dto';
+import { ValidationErrorResponseDto } from '@shared/dto/responses/validation-error.response.dto';
+import { ErrorResponseDto } from '@shared/dto/responses/error.response.dto';
 import { PositiveIntPipe } from '@app/pipes/positive-int.pipe';
 
 @ApiTags('tools')

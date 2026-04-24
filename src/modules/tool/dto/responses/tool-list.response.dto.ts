@@ -1,7 +1,7 @@
 import { ApiProperty,  } from '@nestjs/swagger';
-import { ToolListItemDto } from './tool-list-item.dto';
-import { FiltersAppliedDto } from './filters-applied.dto';
-import { PaginationDto } from '@shared/dto/pagination.dto';
+import { ToolListItemDto } from './tool-list-item.response.dto';
+import { FiltersAppliedDto } from './filters-applied.response.dto';
+import { PaginationDto } from '@shared/dto/responses/pagination.response.dto';
 
 
 
