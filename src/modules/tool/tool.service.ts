@@ -1,9 +1,17 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { ToolRepository } from './tool.repository';
+import { CategoryService } from '@modules/category/category.service';
 import { QueryToolsRequestDto } from './dto/requests/query-tools.dto';
+import { CreateToolRequestDto } from './dto/requests/create-tools.dto';
 import { ToolListItemResponseDto } from './dto/responses/tool-list-item.dto';
 import { ToolListResponseDto } from './dto/responses/tool-list.dto';
 import { ToolDetailResponseDto } from './dto/responses/tool-detail.dto';
+import { ToolMutationResponseDto } from './dto/responses/tool-mutation.dto';
 import { FiltersAppliedResponseDto } from './dto/responses/filters-applied.dto';
 import {
   DateWindow,
@@ -16,7 +24,37 @@ import {
 
 @Injectable()
 export class ToolService {
-  constructor(private readonly toolRepository: ToolRepository) {}
+  constructor(
+    private readonly toolRepository: ToolRepository,
+    private readonly categoryService: CategoryService,
+  ) {}
+
+  // =============================================================================
+  //                          CREATE
+  // =============================================================================
+
+  async create(dto: CreateToolRequestDto): Promise<ToolMutationResponseDto> {
+    const categoryExists = await this.categoryService.existsById(dto.category_id);
+    if (!categoryExists) 
+      throw new BadRequestException({
+        error: 'Validation failed',
+        details: {
+          category_id: `Category with ID ${dto.category_id} does not exist`,
+        },
+      });
+    
+
+    const existing = await this.findByName(dto.name);
+    if (existing) 
+      throw new ConflictException({
+        error: 'Tool already exists',
+        message: `A tool with name "${existing.name}" already exists`,
+      });
+    
+
+    const tool = await this.toolRepository.create(dto);
+    return this.toMutationResponse(tool);
+  }
 
   // =============================================================================
   //                          FIND ALL
@@ -144,6 +182,25 @@ export class ToolService {
           avg_session_minutes: Math.round(usageMetrics._avg.usageMinutes ?? 0),
         },
       },
+    };
+  }
+
+  private toMutationResponse(
+    tool: ToolWithDetailIncludes,
+  ): ToolMutationResponseDto {
+    return {
+      id: tool.id,
+      name: tool.name,
+      description: tool.description,
+      vendor: tool.vendor,
+      website_url: tool.websiteUrl,
+      category: tool.category.name,
+      monthly_cost: tool.monthlyCost.toNumber(),
+      owner_department: tool.ownerDepartment,
+      status: tool.status,
+      active_users_count: tool._count.userToolAccesses,
+      created_at: tool.createdAt.toISOString(),
+      updated_at: tool.updatedAt.toISOString(),
     };
   }
 

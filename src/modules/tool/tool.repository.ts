@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '@db/prisma.service';
 import { QueryToolsRequestDto } from './dto/requests/query-tools.dto';
+import { CreateToolRequestDto } from './dto/requests/create-tools.dto';
 import {
   SORT_FIELD_MAP,
   TOOL_DETAIL_INCLUDE,
@@ -69,6 +70,26 @@ export class ToolRepository {
     return this.prisma.tool.findFirst({
       where: { name: { equals: name, mode: 'insensitive' } },
       select: TOOL_MIN_SELECT,
+    });
+  }
+
+  // =============================================================================
+  //                            CREATE
+  // =============================================================================
+
+  create(dto: CreateToolRequestDto): Promise<ToolWithDetailIncludes> {
+    return this.prisma.tool.create({
+      data: {
+        name: dto.name,
+        description: dto.description,
+        vendor: dto.vendor,
+        websiteUrl: dto.website_url,
+        monthlyCost: dto.monthly_cost,
+        ownerDepartment: dto.owner_department,
+        status: 'active',
+        category: { connect: { id: dto.category_id } },
+      },
+      include: TOOL_DETAIL_INCLUDE,
     });
   }
 

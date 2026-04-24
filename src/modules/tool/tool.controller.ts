@@ -1,6 +1,8 @@
-import { Body, Controller, Get, Param, Post, Query, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
+  ApiConflictResponse,
+  ApiCreatedResponse,
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -12,6 +14,7 @@ import { ToolService } from './tool.service';
 import { QueryToolsRequestDto } from './dto/requests/query-tools.dto';
 import { ToolListResponseDto } from './dto/responses/tool-list.dto';
 import { ToolDetailResponseDto } from './dto/responses/tool-detail.dto';
+import { ToolMutationResponseDto } from './dto/responses/tool-mutation.dto';
 import { ValidationErrorResponseDto } from '@shared/dto/responses/validation-error.dto';
 import { ErrorResponseDto } from '@shared/dto/responses/error.dto';
 import { PositiveIntPipe } from '@app/pipes/positive-int.pipe';
@@ -29,11 +32,32 @@ export class ToolController {
 
 
   @Post()
-
+  @ApiOperation({
+    summary: 'Create a tool',
+    description:
+      'Creates a new tool. The category_id must reference an existing category, and the name must be unique (case-insensitive).',
+  })
+  @ApiCreatedResponse({
+    description: 'Tool created successfully.',
+    type: ToolMutationResponseDto,
+  })
+  @ApiBadRequestResponse({
+    description:
+      'Validation failed (invalid body or referenced category does not exist).',
+    type: ValidationErrorResponseDto,
+  })
+  @ApiConflictResponse({
+    description: 'A tool with the same name already exists.',
+    type: ErrorResponseDto,
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Unexpected server error.',
+    type: ErrorResponseDto,
+  })
   create(
-    @Body() dto : CreateToolRequestDto,
-  ): Promise<any> {
-    ;
+    @Body() dto: CreateToolRequestDto,
+  ): Promise<ToolMutationResponseDto> {
+    return this.toolService.create(dto);
   }
 
 
