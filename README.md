@@ -242,6 +242,38 @@ The CDC requires `name` to be unique. Uniqueness is enforced **case-insensitivel
 ### `monthly_cost = 0` allowed
 
 The CDC specifies `monthly_cost >= 0`. Zero is explicitly allowed to cover free tools (e.g., Google Analytics in the seed data). Rationale: free-of-charge tools still need to be tracked in the catalog for access management, onboarding, and usage analytics purposes.
+
+### PUT vs PATCH for tool update
+
+**CDC spec:** `PUT /api/tools/:id` with partial body semantics ("fields not provided are preserved").
+
+**Implementation:** `PATCH /api/tools/:id` with the same partial body semantics.
+
+**Rationale:**
+The CDC describes PATCH semantics (partial update, preserving unspecified fields) but names the route `PUT`, which by REST convention means full replacement. Using the correct HTTP verb matters for:
+- **Developer clarity:** any engineer joining the project can rely on HTTP method conventions. PUT suggesting "replace everything" while behaving as PATCH causes confusion during onboarding and code review.
+- **Client interoperability:** OpenAPI-generated SDKs, API proxies, and strict REST clients may enforce verb semantics. A client sending an incomplete body to a PUT endpoint could be rejected before reaching the server.
+- **Future-proofing:** if a true full-replacement PUT is ever needed, the verb is available without confusion.
+
+**If the CDC's choice of PUT is intentional,** this is a discussion worth having with the product owner before locking the contract — changing a public API verb later is a breaking change for consumers.
+
+### `name` is immutable via PUT/PATCH
+
+The `name` field is **not modifiable** through the update endpoint, even though the CDC mentions "same validations as POST for modified fields".
+
+**Rationale:**
+- `name` acts as a near-natural identifier (UNIQUE constraint, used in conversations and documentation)
+- Renaming a tool would break data lineage: reports, dashboards, and analytics referencing the old name become ambiguous
+- Silent renames can introduce authentication/authorization drifts if downstream systems cache names
+
+**To be discussed with Product:**
+If renaming becomes a business need (typo corrections, vendor rebrandings), we recommend:
+1. Adding role-based access control so only admins can rename
+2. Emitting an audit event on rename for downstream systems
+3. Optionally storing a `name_history` for traceability
+
+Currently, renaming requires a DB-level operation or a dedicated endpoint outside the standard update flow.
+
 ### Out-of-scope user stories (identified for future iterations)
 
 **Marcus — "Export data for Excel analysis"**
