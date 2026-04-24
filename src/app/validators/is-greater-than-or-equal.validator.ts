@@ -21,9 +21,9 @@ export function IsGreaterThanOrEqual(
           const relatedValue = (args.object as Record<string, unknown>)[
             relatedPropertyName
           ];
-          if (typeof value !== 'number' || typeof relatedValue !== 'number') return true;
-          return ( value >= relatedValue );
-          
+          if (relatedValue === undefined || relatedValue === null) return true;
+          if (typeof value !== 'number' || typeof relatedValue !== 'number') return false;
+          return value >= relatedValue;
         },
         defaultMessage(args: ValidationArguments) {
           return `${args.property} must be greater than or equal to ${args.constraints[0]}`;
