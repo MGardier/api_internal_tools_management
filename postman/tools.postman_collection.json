@@ -223,6 +223,168 @@
             "description": "Expects a 400 Bad Request: unknown query parameter (forbidNonWhitelisted)."
           },
           "response": []
+        },
+        {
+          "name": "GET /tools/:id - found",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tools/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["tools", "1"]
+            },
+            "description": "Returns the full detail of tool 1, including 30-day usage metrics."
+          },
+          "response": []
+        },
+        {
+          "name": "GET /tools/:id - 404 not found",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tools/999999",
+              "host": ["{{baseUrl}}"],
+              "path": ["tools", "999999"]
+            },
+            "description": "Expects a 404 Not Found when the tool ID does not exist."
+          },
+          "response": []
+        },
+        {
+          "name": "GET /tools/:id - 400 invalid id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tools/abc",
+              "host": ["{{baseUrl}}"],
+              "path": ["tools", "abc"]
+            },
+            "description": "Expects a 400 Bad Request: id must be a positive integer (PositiveIntPipe)."
+          },
+          "response": []
+        },
+        {
+          "name": "POST /tools - 201 created (full body)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tools",
+              "host": ["{{baseUrl}}"],
+              "path": ["tools"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Linear\",\n  \"description\": \"Issue tracking and project management\",\n  \"vendor\": \"Linear\",\n  \"website_url\": \"https://linear.app\",\n  \"category_id\": 2,\n  \"monthly_cost\": 8.0,\n  \"owner_department\": \"Engineering\"\n}"
+            },
+            "description": "Creates a new tool with all fields. Status is set to 'active' server-side."
+          },
+          "response": []
+        },
+        {
+          "name": "POST /tools - 201 created (minimal body)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tools",
+              "host": ["{{baseUrl}}"],
+              "path": ["tools"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"MinimalTool\",\n  \"vendor\": \"Acme\",\n  \"category_id\": 1,\n  \"monthly_cost\": 0,\n  \"owner_department\": \"Operations\"\n}"
+            },
+            "description": "Creates a tool with only required fields (description and website_url omitted)."
+          },
+          "response": []
+        },
+        {
+          "name": "POST /tools - 400 missing required fields",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tools",
+              "host": ["{{baseUrl}}"],
+              "path": ["tools"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Incomplete\"\n}"
+            },
+            "description": "Expects a 400 Bad Request: vendor, category_id, monthly_cost, owner_department are required."
+          },
+          "response": []
+        },
+        {
+          "name": "POST /tools - 400 category does not exist",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tools",
+              "host": ["{{baseUrl}}"],
+              "path": ["tools"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"GhostCategoryTool\",\n  \"vendor\": \"Acme\",\n  \"category_id\": 999999,\n  \"monthly_cost\": 5,\n  \"owner_department\": \"Engineering\"\n}"
+            },
+            "description": "Expects a 400 Bad Request with details.category_id when the referenced category does not exist."
+          },
+          "response": []
+        },
+        {
+          "name": "POST /tools - 409 name already exists",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tools",
+              "host": ["{{baseUrl}}"],
+              "path": ["tools"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"figma\",\n  \"vendor\": \"Figma Inc.\",\n  \"category_id\": 1,\n  \"monthly_cost\": 15,\n  \"owner_department\": \"Design\"\n}"
+            },
+            "description": "Expects a 409 Conflict: case-insensitive name collision (e.g. 'figma' vs existing 'Figma')."
+          },
+          "response": []
+        },
+        {
+          "name": "POST /tools - 400 invalid website_url",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tools",
+              "host": ["{{baseUrl}}"],
+              "path": ["tools"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"BadUrlTool\",\n  \"vendor\": \"Acme\",\n  \"website_url\": \"not-a-url\",\n  \"category_id\": 1,\n  \"monthly_cost\": 5,\n  \"owner_department\": \"Engineering\"\n}"
+            },
+            "description": "Expects a 400 Bad Request: website_url must be a valid URL."
+          },
+          "response": []
         }
       ]
     },
