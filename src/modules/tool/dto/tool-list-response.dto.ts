@@ -7,19 +7,19 @@ import { PaginationDto } from '@shared/dto/pagination.dto';
 
 export class ToolListResponseDto {
   @ApiProperty({ type: ToolListItemDto, isArray: true })
-  data: ToolListItemDto[];
+  data!: ToolListItemDto[];
 
   @ApiProperty({
     description: 'Total number of tools in the database (unfiltered)',
     example: 128,
   })
-  total: number;
+  total!: number;
 
   @ApiProperty({
     description: 'Number of tools matching the applied filters',
     example: 42,
   })
-  filtered: number;
+  filtered!: number;
 
   @ApiProperty({
     description: 'Map of filters actually applied. Only provided filters are included; absent filters are omitted (not set to null).',
@@ -29,9 +29,9 @@ export class ToolListResponseDto {
       status: 'active',
     },
   })
-  filters_applied: FiltersAppliedDto;
+  filters_applied!: FiltersAppliedDto;
 
 
   @ApiProperty({ type: PaginationDto })
-  pagination: PaginationDto;
+  pagination!: PaginationDto;
 }

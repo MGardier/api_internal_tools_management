@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class ValidationErrorResponseDto {
   @ApiProperty({ example: 'Validation failed' })
-  error: string;
+  error!: string;
 
   @ApiProperty({
     description: 'Field-level error messages',
@@ -13,5 +13,5 @@ export class ValidationErrorResponseDto {
     },
     additionalProperties: { type: 'string' },
   })
-  details: Record<string, string>;
+  details!: Record<string, string>;
 }
