@@ -230,6 +230,18 @@ Cette limitation est volontairement conservée pour respecter le contrat d'API, 
 
 **Évolution possible :** un endpoint dédié aux analyses temporelles (ex. `GET /api/tools/:id/usage?from=X&to=Y`) serait pertinent pour couvrir le besoin de reporting trimestriel évoqué par Marcus (Finance Controller) dans les personas.
 
+
+### Tool name uniqueness — case-insensitive check
+
+The CDC requires `name` to be unique. Uniqueness is enforced **case-insensitively** at the application layer: creating "slack" while "Slack" already exists returns `409 Conflict`. The original casing chosen by the first creator is preserved as-is (no silent normalization of user input).
+
+**Rationale:** avoiding silent transformations of user input respects the principle that the API should never modify data without the client's knowledge. Modifying casing could also break trademarks (e.g., "iPhone" → "Iphone"), multi-word names ("Google Workspace"), or acronyms ("AWS" → "Aws").
+
+**To be refined with the product owner:** current behavior allows legitimate creation of "Slack Pro" or "Slack Enterprise" as separate tools. If the business considers these as ambiguous variants of "Slack", a fuzzy matching or explicit product ownership model should be discussed before tightening the rule.
+
+### `monthly_cost = 0` allowed
+
+The CDC specifies `monthly_cost >= 0`. Zero is explicitly allowed to cover free tools (e.g., Google Analytics in the seed data). Rationale: free-of-charge tools still need to be tracked in the catalog for access management, onboarding, and usage analytics purposes.
 ### Out-of-scope user stories (identified for future iterations)
 
 **Marcus — "Export data for Excel analysis"**
