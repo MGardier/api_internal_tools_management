@@ -66,7 +66,6 @@ export class ToolService {
   // =============================================================================
 
 
-
   private getDateWindow(): DateWindow {
     const until = new Date();
     until.setUTCHours(0, 0, 0, 0);
@@ -74,11 +73,6 @@ export class ToolService {
     since.setUTCDate(since.getUTCDate() - 30);
     return { since, until };
   }
-
-  private roundTo2Decimals(value: number): number {
-    return Math.round(value * 100) / 100;
-  }
-
 
   private buildFiltersApplied(query: QueryToolsDto): FiltersAppliedDto {
     const filters: FiltersAppliedDto = {};
@@ -117,7 +111,6 @@ export class ToolService {
     usageMetrics: UsageMetricsRaw,
   ): ToolDetailDto {
     const activeUsersCount = tool._count.userToolAccesses;
-    const monthlyCost = tool.monthlyCost.toNumber();
 
     return {
       id: tool.id,
@@ -126,11 +119,14 @@ export class ToolService {
       vendor: tool.vendor,
       website_url: tool.websiteUrl,
       category: tool.category.name,
-      monthly_cost: monthlyCost,
+      monthly_cost: tool.monthlyCost.toNumber(),
       owner_department: tool.ownerDepartment,
       status: tool.status,
       active_users_count: activeUsersCount,
-      total_monthly_cost: this.roundTo2Decimals(monthlyCost * activeUsersCount),
+      total_monthly_cost: tool.monthlyCost
+        .mul(activeUsersCount)
+        .toDecimalPlaces(2)
+        .toNumber(),
       created_at: tool.createdAt.toISOString(),
       updated_at: tool.updatedAt.toISOString(),
       usage_metrics: {
