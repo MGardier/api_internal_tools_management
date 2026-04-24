@@ -7,6 +7,7 @@ import { ToolDetailResponseDto } from './dto/responses/tool-detail.dto';
 import { FiltersAppliedResponseDto } from './dto/responses/filters-applied.dto';
 import {
   DateWindow,
+  ToolNameSummary,
   ToolWithDetailIncludes,
   ToolWithListIncludes,
   UsageMetricsRaw,
@@ -59,6 +60,14 @@ export class ToolService {
     const usageMetrics = await this.toolRepository.getUsageMetrics(id, since,until);
 
     return this.toDetail(tool, usageMetrics);
+  }
+
+  // =============================================================================
+  //                          FIND BY NAME
+  // =============================================================================
+
+  findByName(name: string): Promise<ToolNameSummary | null> {
+    return this.toolRepository.findByName(name);
   }
 
   // =============================================================================

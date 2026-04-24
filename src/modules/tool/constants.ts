@@ -29,3 +29,8 @@ export const TOOL_DETAIL_INCLUDE = {
     },
   },
 } satisfies Prisma.ToolInclude;
+
+export const TOOL_MIN_SELECT = {
+  id: true,
+  name: true,
+} satisfies Prisma.ToolSelect;

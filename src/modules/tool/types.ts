@@ -1,5 +1,9 @@
 import { Prisma } from '@prisma/client';
-import { TOOL_DETAIL_INCLUDE, TOOL_LIST_INCLUDE } from './constants';
+import {
+  TOOL_DETAIL_INCLUDE,
+  TOOL_LIST_INCLUDE,
+  TOOL_MIN_SELECT,
+} from './constants';
 
 export type ToolSortField = 'cost' | 'name' | 'date';
 
@@ -9,6 +13,10 @@ export type ToolWithListIncludes = Prisma.ToolGetPayload<{
 
 export type ToolWithDetailIncludes = Prisma.ToolGetPayload<{
   include: typeof TOOL_DETAIL_INCLUDE;
+}>;
+
+export type ToolNameSummary = Prisma.ToolGetPayload<{
+  select: typeof TOOL_MIN_SELECT;
 }>;
 
 export interface UsageMetricsRaw {

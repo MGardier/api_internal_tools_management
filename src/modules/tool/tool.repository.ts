@@ -6,8 +6,10 @@ import {
   SORT_FIELD_MAP,
   TOOL_DETAIL_INCLUDE,
   TOOL_LIST_INCLUDE,
+  TOOL_MIN_SELECT,
 } from './constants';
 import {
+  ToolNameSummary,
   ToolWithDetailIncludes,
   ToolWithListIncludes,
   UsageMetricsRaw,
@@ -56,6 +58,17 @@ export class ToolRepository {
     return this.prisma.tool.findUnique({
       where: { id },
       include: TOOL_DETAIL_INCLUDE,
+    });
+  }
+
+  // =============================================================================
+  //                            FIND BY NAME
+  // =============================================================================
+
+  findByName(name: string): Promise<ToolNameSummary | null> {
+    return this.prisma.tool.findFirst({
+      where: { name: { equals: name, mode: 'insensitive' } },
+      select: TOOL_MIN_SELECT,
     });
   }
 
