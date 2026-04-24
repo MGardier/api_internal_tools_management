@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
-import { BadRequestException, ValidationPipe } from '@nestjs/common';
+import { BadRequestException, Logger, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import type { EnvConfig } from '@app/config/env.schema';
@@ -38,4 +38,7 @@ async function bootstrap() {
 
   await app.listen(config.get('PORT', { infer: true }));
 }
-bootstrap();
+bootstrap().catch((err) => {
+  new Logger('Bootstrap').error('Failed to bootstrap application', err);
+  process.exit(1);
+});
