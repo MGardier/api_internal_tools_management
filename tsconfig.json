@@ -16,11 +16,13 @@
     "noImplicitAny": true,
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
+    "types": ["jest", "node"],
     "paths": {
       "@app/*": ["./src/app/*"],
       "@modules/*": ["./src/modules/*"],
       "@shared/*": ["./src/shared/*"],
       "@db/*": ["./prisma/*"]
     }
-  }
+  },
+  "include": ["src/**/*", "test/**/*", "prisma/**/*"]
 }
