@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { DepartmentType, ToolStatusType } from '@prisma/client';
 
-export class ToolListItemDto {
+export class ToolListItemResponseDto {
   @ApiProperty({ example: 1 })
   id!: number;
 

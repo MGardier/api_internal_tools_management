@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ToolRepository } from './tool.repository';
-import { QueryToolsDto } from './dto/requests/query-tools.request.dto';
-import { ToolListItemDto } from './dto/responses/tool-list-item.response.dto';
-import { ToolListResponseDto } from './dto/responses/tool-list.response.dto';
-import { ToolDetailDto } from './dto/responses/tool-detail.response.dto';
-import { FiltersAppliedDto } from './dto/responses/filters-applied.response.dto';
+import { QueryToolsRequestDto } from './dto/requests/query-tools.dto';
+import { ToolListItemResponseDto } from './dto/responses/tool-list-item.dto';
+import { ToolListResponseDto } from './dto/responses/tool-list.dto';
+import { ToolDetailResponseDto } from './dto/responses/tool-detail.dto';
+import { FiltersAppliedResponseDto } from './dto/responses/filters-applied.dto';
 import {
   DateWindow,
   ToolWithDetailIncludes,
@@ -21,7 +21,7 @@ export class ToolService {
   //                          FIND ALL
   // =============================================================================
 
-  async findAll(query: QueryToolsDto): Promise<ToolListResponseDto> {
+  async findAll(query: QueryToolsRequestDto): Promise<ToolListResponseDto> {
     const [items, filtered, total] = await Promise.all([
       this.toolRepository.findMany(query),
       this.toolRepository.count(query),
@@ -45,7 +45,7 @@ export class ToolService {
   //                          FIND ONE
   // =============================================================================
 
-  async findOne(id: number): Promise<ToolDetailDto> {
+  async findOne(id: number): Promise<ToolDetailResponseDto> {
     const tool = await this.toolRepository.findById(id);
 
     if (!tool) 
@@ -74,8 +74,8 @@ export class ToolService {
     return { since, until };
   }
 
-  private buildFiltersApplied(query: QueryToolsDto): FiltersAppliedDto {
-    const filters: FiltersAppliedDto = {};
+  private buildFiltersApplied(query: QueryToolsRequestDto): FiltersAppliedResponseDto {
+    const filters: FiltersAppliedResponseDto = {};
     if (query.department) filters.department = query.department;
     if (query.status) filters.status = query.status;
     if (query.category) filters.category = query.category;
@@ -90,7 +90,7 @@ export class ToolService {
   //                        PRIVATE MAPPING
   // =============================================================================
 
-  private toListItem(tool: ToolWithListIncludes): ToolListItemDto {
+  private toListItem(tool: ToolWithListIncludes): ToolListItemResponseDto {
     return {
       id: tool.id,
       name: tool.name,
@@ -109,7 +109,7 @@ export class ToolService {
     private toDetail(
     tool: ToolWithDetailIncludes,
     usageMetrics: UsageMetricsRaw,
-  ): ToolDetailDto {
+  ): ToolDetailResponseDto {
     const activeUsersCount = tool._count.userToolAccesses;
 
     return {

@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, Req } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiInternalServerErrorResponse,
@@ -9,18 +9,37 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { ToolService } from './tool.service';
-import { QueryToolsDto } from './dto/requests/query-tools.request.dto';
-import { ToolListResponseDto } from './dto/responses/tool-list.response.dto';
-import { ToolDetailDto } from './dto/responses/tool-detail.response.dto';
-import { ValidationErrorResponseDto } from '@shared/dto/responses/validation-error.response.dto';
-import { ErrorResponseDto } from '@shared/dto/responses/error.response.dto';
+import { QueryToolsRequestDto } from './dto/requests/query-tools.dto';
+import { ToolListResponseDto } from './dto/responses/tool-list.dto';
+import { ToolDetailResponseDto } from './dto/responses/tool-detail.dto';
+import { ValidationErrorResponseDto } from '@shared/dto/responses/validation-error.dto';
+import { ErrorResponseDto } from '@shared/dto/responses/error.dto';
 import { PositiveIntPipe } from '@app/pipes/positive-int.pipe';
+import { CreateToolRequestDto } from './dto/requests/create-tools.dto';
 
 @ApiTags('tools')
 @Controller('tools')
 export class ToolController {
   constructor(private readonly toolService: ToolService) { }
 
+
+  // =============================================================================
+  //                               CREATE
+  // =============================================================================
+
+
+  @Post()
+
+  create(
+    @Body() dto : CreateToolRequestDto,
+  ): Promise<any> {
+    ;
+  }
+
+
+  // =============================================================================
+  //                               FIND ALL
+  // =============================================================================
   @Get()
   @ApiOperation({
     summary: 'List tools',
@@ -39,9 +58,16 @@ export class ToolController {
     description: 'Unexpected server error.',
     type: ErrorResponseDto,
   })
-  findAll(@Query() query: QueryToolsDto): Promise<ToolListResponseDto> {
+  findAll(@Query() query: QueryToolsRequestDto): Promise<ToolListResponseDto> {
     return this.toolService.findAll(query);
   }
+
+
+
+
+  // =============================================================================
+  //                               FIND ONE 
+  // =============================================================================
 
   @Get(':id')
   @ApiOperation({
@@ -57,7 +83,7 @@ export class ToolController {
   })
   @ApiOkResponse({
     description: 'Tool detail with usage metrics.',
-    type: ToolDetailDto,
+    type: ToolDetailResponseDto,
   })
   @ApiBadRequestResponse({
     description: 'Validation failed (id is not a positive integer).',
@@ -73,7 +99,7 @@ export class ToolController {
   })
   findOne(
     @Param('id', PositiveIntPipe) id: number,
-  ): Promise<ToolDetailDto> {
+  ): Promise<ToolDetailResponseDto> {
     return this.toolService.findOne(id);
   }
 }

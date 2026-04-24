@@ -17,7 +17,7 @@ import { SORT_FIELDS } from '../../constants';
 import { SORT_ORDERS } from '@shared/constants/constants';
 import { SortOrder } from '@shared/types/types';
 
-export class QueryToolsDto {
+export class QueryToolsRequestDto {
   @ApiPropertyOptional({
     enum: DepartmentType,
     description: 'Filter by owner department',

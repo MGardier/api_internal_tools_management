@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { DepartmentType, ToolStatusType } from '@prisma/client';
-import { UsageMetricsDto } from './usage-metrics.response.dto';
+import { UsageMetricsResponseDto } from './usage-metrics.dto';
 
-export class ToolDetailDto {
+export class ToolDetailResponseDto {
   @ApiProperty({ example: 5 })
   id!: number;
 
@@ -50,6 +50,6 @@ export class ToolDetailDto {
   @ApiProperty({ example: '2025-05-01T09:00:00.000Z' })
   updated_at!: string;
 
-  @ApiProperty({ type: UsageMetricsDto })
-  usage_metrics!: UsageMetricsDto;
+  @ApiProperty({ type: UsageMetricsResponseDto })
+  usage_metrics!: UsageMetricsResponseDto;
 }

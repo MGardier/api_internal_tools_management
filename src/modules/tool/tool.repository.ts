@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '@db/prisma.service';
-import { QueryToolsDto } from './dto/requests/query-tools.request.dto';
+import { QueryToolsRequestDto } from './dto/requests/query-tools.dto';
 import {
   SORT_FIELD_MAP,
   TOOL_DETAIL_INCLUDE,
@@ -21,7 +21,7 @@ export class ToolRepository {
   //                            FIND ALL
   // =============================================================================
 
-  findMany(query: QueryToolsDto): Promise<ToolWithListIncludes[]> {
+  findMany(query: QueryToolsRequestDto): Promise<ToolWithListIncludes[]> {
     const where = this.buildWhere(query);
     const orderBy: Prisma.ToolOrderByWithRelationInput = {
       [SORT_FIELD_MAP[query.sort]]: query.order,
@@ -43,7 +43,7 @@ export class ToolRepository {
     return this.prisma.tool.count();
   }
 
-  count(query?: QueryToolsDto): Promise<number> {
+  count(query?: QueryToolsRequestDto): Promise<number> {
     const where = query ? this.buildWhere(query) : {};
     return this.prisma.tool.count({ where });
   }
@@ -74,7 +74,7 @@ export class ToolRepository {
   //                            PRIVATE
   // =============================================================================
 
-  private buildWhere(query: QueryToolsDto): Prisma.ToolWhereInput {
+  private buildWhere(query: QueryToolsRequestDto): Prisma.ToolWhereInput {
     const where: Prisma.ToolWhereInput = {};
 
     if (query.department) where.ownerDepartment = query.department;

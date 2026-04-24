@@ -1,7 +1,7 @@
 import { ApiPropertyOptional } from "@nestjs/swagger";
 import { DepartmentType, ToolStatusType } from "@prisma/client";
 
-export class FiltersAppliedDto {
+export class FiltersAppliedResponseDto {
   @ApiPropertyOptional({ enum: DepartmentType, example: 'Engineering' })
   department?: DepartmentType;
 
