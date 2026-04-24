@@ -29,11 +29,11 @@ model AccessRequest {
 }
 
 model Category {
-  id          Int       @id @default(autoincrement())
-  name        String    @unique @db.VarChar(50)
+  id          Int      @id @default(autoincrement())
+  name        String   @unique @db.VarChar(50)
   description String?
-  colorHex    String?   @default("#6366f1") @map("color_hex") @db.VarChar(7)
-  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
+  colorHex    String?  @default("#6366f1") @map("color_hex") @db.VarChar(7)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamp(6)
   tools       Tool[]
 
   @@map("categories")
@@ -41,13 +41,13 @@ model Category {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model CostTracking {
-  id               Int       @id @default(autoincrement())
-  toolId           Int       @map("tool_id")
-  monthYear        DateTime  @map("month_year") @db.Date
-  totalMonthlyCost Decimal   @map("total_monthly_cost") @db.Decimal(10, 2)
-  activeUsersCount Int       @default(0) @map("active_users_count")
-  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
-  tool             Tool      @relation(fields: [toolId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  id               Int      @id @default(autoincrement())
+  toolId           Int      @map("tool_id")
+  monthYear        DateTime @map("month_year") @db.Date
+  totalMonthlyCost Decimal  @map("total_monthly_cost") @db.Decimal(10, 2)
+  activeUsersCount Int      @default(0) @map("active_users_count")
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  tool             Tool     @relation(fields: [toolId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@unique([toolId, monthYear])
   @@index([monthYear, toolId], map: "idx_cost_month_tool")
@@ -67,7 +67,7 @@ model Tool {
   ownerDepartment  DepartmentType   @map("owner_department")
   status           ToolStatusType   @default(active)
   createdAt        DateTime         @default(now()) @map("created_at") @db.Timestamp(6)
-  updatedAt        DateTime         @default(now()) @map("updated_at") @db.Timestamp(6)
+  updatedAt        DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   accessRequests   AccessRequest[]
   costTracking     CostTracking[]
   category         Category         @relation(fields: [categoryId], references: [id], onUpdate: NoAction)
@@ -83,15 +83,15 @@ model Tool {
 }
 
 model UsageLog {
-  id           Int       @id @default(autoincrement())
-  userId       Int       @map("user_id")
-  toolId       Int       @map("tool_id")
-  sessionDate  DateTime  @map("session_date") @db.Date
-  usageMinutes Int?      @default(0) @map("usage_minutes")
-  actionsCount Int?      @default(0) @map("actions_count")
-  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
-  tool         Tool      @relation(fields: [toolId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  id           Int      @id @default(autoincrement())
+  userId       Int      @map("user_id")
+  toolId       Int      @map("tool_id")
+  sessionDate  DateTime @map("session_date") @db.Date
+  usageMinutes Int?     @default(0) @map("usage_minutes")
+  actionsCount Int?     @default(0) @map("actions_count")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  tool         Tool     @relation(fields: [toolId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@index([sessionDate, toolId], map: "idx_usage_date_tool")
   @@index([userId, sessionDate], map: "idx_usage_user_date")
@@ -130,7 +130,7 @@ model User {
   status                  UserStatusType?  @default(active)
   hireDate                DateTime?        @map("hire_date") @db.Date
   createdAt               DateTime         @default(now()) @map("created_at") @db.Timestamp(6)
-  updatedAt               DateTime         @default(now()) @map("updated_at") @db.Timestamp(6)
+  updatedAt               DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   accessRequestsProcessed AccessRequest[]  @relation("AccessRequestProcessedBy")
   accessRequests          AccessRequest[]  @relation("AccessRequestUser")
   usageLogs               UsageLog[]
