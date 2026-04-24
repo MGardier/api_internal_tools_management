@@ -36,7 +36,16 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 
-    if (response.headersSent) return;
+    if (response.headersSent) {
+      const error =
+        exception instanceof Error ? exception : new Error(String(exception));
+      this.logger.warn(
+        `Exception raised after headers were sent — response already committed, cannot be rewritten. ` +
+          `method=${request.method} path=${request.url} exception=${error.constructor.name} message=${error.message}`,
+        error.stack,
+      );
+      return;
+    }
 
     if (exception instanceof HttpException) {
       this.handleHttpException(exception, request, response);
