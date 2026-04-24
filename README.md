@@ -298,5 +298,5 @@ CSV is recommended as the MVP: lighter, no extra dependency, opens natively in E
 | Marcus Rodriguez (Finance Controller) | Export data for Excel analysis | ⚠️ Out of CDC technical scope — see "Out-of-scope user stories" section |
 | Lisa Wang (HR Director) | Add a new tool to the catalog | `POST /api/tools` |
 | Lisa Wang (HR Director) | Validate submitted tool information (cost, vendor, URL, etc.) | Input validation via DTO + class-validator on `POST /api/tools` |
-| David Kumar (Platform Admin) | Update existing tool information | `PUT /api/tools/:id` |
-| David Kumar (Platform Admin) | Change tool statuses (active → deprecated) | `PUT /api/tools/:id` (with `status` field) |
+| David Kumar (Platform Admin) | Update existing tool information | `PATCH /api/tools/:id` |
+| David Kumar (Platform Admin) | Change tool statuses (active → deprecated) | `PATCH /api/tools/:id` (with `status` field) |
