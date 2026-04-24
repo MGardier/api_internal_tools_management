@@ -385,6 +385,106 @@
             "description": "Expects a 400 Bad Request: website_url must be a valid URL."
           },
           "response": []
+        },
+        {
+          "name": "PATCH /tools/:id - 200 partial update",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tools/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["tools", "1"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"monthly_cost\": 12.5,\n  \"owner_department\": \"Engineering\"\n}"
+            },
+            "description": "Updates only the provided fields. Other fields are left untouched."
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /tools/:id - 200 empty body (no-op)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tools/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["tools", "1"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "description": "Empty body is valid and returns 200 with the current tool (no fields change; updated_at is bumped via @updatedAt)."
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /tools/:id - 404 tool not found",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tools/999999",
+              "host": ["{{baseUrl}}"],
+              "path": ["tools", "999999"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"monthly_cost\": 10\n}"
+            },
+            "description": "Expects a 404 Not Found when the tool ID does not exist."
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /tools/:id - 400 category does not exist",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tools/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["tools", "1"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category_id\": 999999\n}"
+            },
+            "description": "Expects a 400 Bad Request with details.category_id when the new category does not exist."
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /tools/:id - 400 name is forbidden",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tools/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["tools", "1"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"NewName\"\n}"
+            },
+            "description": "Expects a 400 Bad Request: name is not allowed in updates (rejected by forbidNonWhitelisted since UpdateToolRequestDto omits name)."
+          },
+          "response": []
         }
       ]
     },
