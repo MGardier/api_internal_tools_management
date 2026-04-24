@@ -43,7 +43,7 @@ export class ToolRepository {
     return this.prisma.tool.count();
   }
 
-  count(query: QueryToolsDto): Promise<number> {
+  count(query?: QueryToolsDto): Promise<number> {
     const where = query ? this.buildWhere(query) : {};
     return this.prisma.tool.count({ where });
   }
