@@ -229,4 +229,102 @@ describe('Tools Integration', () => {
   it('rejects limit=0 with 400', async () => {
     await request(app.getHttpServer()).get('/api/tools?limit=0').expect(400);
   });
+
+  // ===========================================================================
+  // GET /tools/:id
+  // ===========================================================================
+
+  it('returns full tool detail with computed total_monthly_cost and usage_metrics over the last 30 days', async () => {
+    const category = await prisma.category.create({ data: { name: 'Design' } });
+
+    const tool = await prisma.tool.create({
+      data: {
+        name: 'Figma',
+        vendor: 'Figma Inc.',
+        description: 'Collaborative design tool',
+        websiteUrl: 'https://figma.com',
+        monthlyCost: 150,
+        ownerDepartment: 'Design',
+        status: 'active',
+        category: { connect: { id: category.id } },
+      },
+    });
+
+    const admin = await prisma.user.create({
+      data: {
+        name: 'Admin',
+        email: 'admin@test.local',
+        department: 'Engineering',
+        role: 'admin',
+      },
+    });
+    const users = await Promise.all(
+      [1, 2, 3, 4].map((i) =>
+        prisma.user.create({
+          data: {
+            name: `User ${i}`,
+            email: `user${i}@test.local`,
+            department: 'Engineering',
+          },
+        }),
+      ),
+    );
+
+    await prisma.userToolAccess.createMany({
+      data: [
+        { userId: users[0].id, toolId: tool.id, grantedBy: admin.id, status: 'active' },
+        { userId: users[1].id, toolId: tool.id, grantedBy: admin.id, status: 'active' },
+        { userId: users[2].id, toolId: tool.id, grantedBy: admin.id, status: 'active' },
+        { userId: users[3].id, toolId: tool.id, grantedBy: admin.id, status: 'revoked' },
+      ],
+    });
+
+    const daysAgo = (days: number): Date => {
+      const d = new Date();
+      d.setUTCDate(d.getUTCDate() - days);
+      d.setUTCHours(0, 0, 0, 0);
+      return d;
+    };
+    await prisma.usageLog.createMany({
+      data: [
+        { userId: users[0].id, toolId: tool.id, sessionDate: daysAgo(1), usageMinutes: 30 },
+        { userId: users[0].id, toolId: tool.id, sessionDate: daysAgo(5), usageMinutes: 60 },
+        { userId: users[1].id, toolId: tool.id, sessionDate: daysAgo(10), usageMinutes: 90 },
+        { userId: users[1].id, toolId: tool.id, sessionDate: daysAgo(20), usageMinutes: 120 },
+        { userId: users[0].id, toolId: tool.id, sessionDate: daysAgo(45), usageMinutes: 500 },
+      ],
+    });
+
+    const res = await request(app.getHttpServer())
+      .get(`/api/tools/${tool.id}`)
+      .expect(200);
+
+    expect(res.body).toEqual({
+      id: tool.id,
+      name: 'Figma',
+      description: 'Collaborative design tool',
+      vendor: 'Figma Inc.',
+      website_url: 'https://figma.com',
+      category: 'Design',
+      monthly_cost: 150,
+      owner_department: 'Design',
+      status: 'active',
+      active_users_count: 3,
+      total_monthly_cost: 450,
+      created_at: expect.any(String),
+      updated_at: expect.any(String),
+      usage_metrics: {
+        last_30_days: {
+          total_sessions: 4,
+          avg_session_minutes: 75,
+        },
+      },
+    });
+  });
+
+  it('returns 404 when the id does not exist', async () => {
+    await request(app.getHttpServer()).get('/api/tools/999999').expect(404);
+  });
+
+
 });
