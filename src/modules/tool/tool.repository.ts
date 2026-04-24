@@ -3,6 +3,7 @@ import { Prisma } from '@prisma/client';
 import { PrismaService } from '@db/prisma.service';
 import { QueryToolsRequestDto } from './dto/requests/query-tools.dto';
 import { CreateToolRequestDto } from './dto/requests/create-tools.dto';
+import { UpdateToolRequestDto } from './dto/requests/update-tools.dto';
 import {
   SORT_FIELD_MAP,
   TOOL_DETAIL_INCLUDE,
@@ -51,6 +52,10 @@ export class ToolRepository {
     return this.prisma.tool.count({ where });
   }
 
+  countById(id: number): Promise<number> {
+    return this.prisma.tool.count({ where: { id } });
+  }
+
   // =============================================================================
   //                            FIND ONE
   // =============================================================================
@@ -88,6 +93,30 @@ export class ToolRepository {
         ownerDepartment: dto.owner_department,
         status: 'active',
         category: { connect: { id: dto.category_id } },
+      },
+      include: TOOL_DETAIL_INCLUDE,
+    });
+  }
+
+  // =============================================================================
+  //                            UPDATE
+  // =============================================================================
+
+  update(
+    id: number,
+    dto: UpdateToolRequestDto,
+  ): Promise<ToolWithDetailIncludes> {
+    return this.prisma.tool.update({
+      where: { id },
+      data: {
+        description: dto.description,
+        vendor: dto.vendor,
+        websiteUrl: dto.website_url,
+        monthlyCost: dto.monthly_cost,
+        ownerDepartment: dto.owner_department,
+        ...(dto.category_id && {
+          category: { connect: { id: dto.category_id } },
+        }),
       },
       include: TOOL_DETAIL_INCLUDE,
     });

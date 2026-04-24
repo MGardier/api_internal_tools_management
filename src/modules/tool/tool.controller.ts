@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiConflictResponse,
@@ -19,6 +27,7 @@ import { ValidationErrorResponseDto } from '@shared/dto/responses/validation-err
 import { ErrorResponseDto } from '@shared/dto/responses/error.dto';
 import { PositiveIntPipe } from '@app/pipes/positive-int.pipe';
 import { CreateToolRequestDto } from './dto/requests/create-tools.dto';
+import { UpdateToolRequestDto } from './dto/requests/update-tools.dto';
 
 @ApiTags('tools')
 @Controller('tools')
@@ -125,5 +134,45 @@ export class ToolController {
     @Param('id', PositiveIntPipe) id: number,
   ): Promise<ToolDetailResponseDto> {
     return this.toolService.findOne(id);
+  }
+
+  // =============================================================================
+  //                               UPDATE
+  // =============================================================================
+
+  @Patch(':id')
+  @ApiOperation({
+    summary: 'Update a tool',
+    description:
+      'Partially updates a tool. All fields are optional; name cannot be changed. An empty body is a valid no-op. If category_id is provided, it must reference an existing category.',
+  })
+  @ApiParam({
+    name: 'id',
+    type: Number,
+    example: 5,
+    description: 'Tool ID (positive integer)',
+  })
+  @ApiOkResponse({
+    description: 'Tool updated successfully.',
+    type: ToolMutationResponseDto,
+  })
+  @ApiBadRequestResponse({
+    description:
+      'Validation failed (invalid body, id, or referenced category does not exist).',
+    type: ValidationErrorResponseDto,
+  })
+  @ApiNotFoundResponse({
+    description: 'Tool not found.',
+    type: ErrorResponseDto,
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Unexpected server error.',
+    type: ErrorResponseDto,
+  })
+  update(
+    @Param('id', PositiveIntPipe) id: number,
+    @Body() dto: UpdateToolRequestDto,
+  ): Promise<ToolMutationResponseDto> {
+    return this.toolService.update(id, dto);
   }
 }

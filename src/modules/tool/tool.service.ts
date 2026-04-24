@@ -8,6 +8,7 @@ import { ToolRepository } from './tool.repository';
 import { CategoryService } from '@modules/category/category.service';
 import { QueryToolsRequestDto } from './dto/requests/query-tools.dto';
 import { CreateToolRequestDto } from './dto/requests/create-tools.dto';
+import { UpdateToolRequestDto } from './dto/requests/update-tools.dto';
 import { ToolListItemResponseDto } from './dto/responses/tool-list-item.dto';
 import { ToolListResponseDto } from './dto/responses/tool-list.dto';
 import { ToolDetailResponseDto } from './dto/responses/tool-detail.dto';
@@ -54,6 +55,47 @@ export class ToolService {
 
     const tool = await this.toolRepository.create(dto);
     return this.toMutationResponse(tool);
+  }
+
+  // =============================================================================
+  //                          UPDATE
+  // =============================================================================
+
+  async update(
+    id: number,
+    dto: UpdateToolRequestDto,
+  ): Promise<ToolMutationResponseDto> {
+    const exists = await this.existsById(id);
+    if (!exists)
+      throw new NotFoundException({
+        error: 'Tool not found',
+        message: `Tool with ID ${id} does not exist`,
+      });
+
+    if (dto.category_id) {
+      const categoryExists = await this.categoryService.existsById(
+        dto.category_id,
+      );
+      if (!categoryExists)
+        throw new BadRequestException({
+          error: 'Validation failed',
+          details: {
+            category_id: `Category with ID ${dto.category_id} does not exist`,
+          },
+        });
+    }
+
+    const tool = await this.toolRepository.update(id, dto);
+    return this.toMutationResponse(tool);
+  }
+
+  // =============================================================================
+  //                          EXIST
+  // =============================================================================
+
+  async existsById(id: number): Promise<boolean> {
+    const count = await this.toolRepository.countById(id);
+    return count > 0;
   }
 
   // =============================================================================
