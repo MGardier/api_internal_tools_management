@@ -163,22 +163,58 @@ export class AllExceptionsFilter implements ExceptionFilter {
   }
 
   private logException(context: HttpLogContext, stack?: string): void {
+    const format = this.configService.get('LOG_FORMAT', { infer: true });
     const timestamp = new Date().toISOString();
 
-    this.logger.error(
+    if (format === 'visual' || format === 'both') {
+      this.logger.error(this.formatVisual(context, timestamp, stack));
+    }
+    if (format === 'json' || format === 'both') {
+      this.logger.error(this.formatJson(context, timestamp, stack));
+    }
+  }
+
+  private formatVisual(
+    context: HttpLogContext,
+    timestamp: string,
+    stack?: string,
+  ): string {
+    return (
       `\n${'═'.repeat(70)}` +
-        `\n║ ${context.statusCode >= 500 ? 'UNHANDLED EXCEPTION' : 'HTTP EXCEPTION'}: ${context.exceptionName}` +
-        `\n${'─'.repeat(70)}` +
-        `\n║ Status     : ${context.statusCode} ${context.statusText}` +
-        `\n║ Method     : ${context.method}` +
-        `\n║ Path       : ${context.path}` +
-        `\n║ Message    : ${context.message}` +
-        this.buildContextLines(context) +
-        this.formatStack(stack) +
-        `\n${'─'.repeat(70)}` +
-        `\n║ Timestamp  : ${timestamp}` +
-        `\n${'═'.repeat(70)}`,
+      `\n║ ${context.statusCode >= 500 ? 'UNHANDLED EXCEPTION' : 'HTTP EXCEPTION'}: ${context.exceptionName}` +
+      `\n${'─'.repeat(70)}` +
+      `\n║ Status     : ${context.statusCode} ${context.statusText}` +
+      `\n║ Method     : ${context.method}` +
+      `\n║ Path       : ${context.path}` +
+      `\n║ Message    : ${context.message}` +
+      this.buildContextLines(context) +
+      this.formatStack(stack) +
+      `\n${'─'.repeat(70)}` +
+      `\n║ Timestamp  : ${timestamp}` +
+      `\n${'═'.repeat(70)}`
     );
+  }
+
+  private formatJson(
+    context: HttpLogContext,
+    timestamp: string,
+    stack?: string,
+  ): string {
+    return JSON.stringify({
+      timestamp,
+      level: 'error',
+      kind:
+        context.statusCode >= 500 ? 'unhandled_exception' : 'http_exception',
+      statusCode: context.statusCode,
+      statusText: context.statusText,
+      method: context.method,
+      path: context.path,
+      exceptionName: context.exceptionName,
+      message: context.message,
+      body: context.body,
+      query: context.query,
+      stack: stack ?? context.stack,
+    });
   }
 
   private buildContextLines(context: HttpLogContext): string {
