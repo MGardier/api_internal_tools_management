@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "Internal Tools Management API",
-    "description": "Collection for testing the Internal Tools Management API. Set the `baseUrl` collection variable to your running server (default: http://localhost:3000/api).",
+    "description": "Collection for testing the Internal Tools Management API. Set the `baseUrl` collection variable to your running server (default: http://localhost:3000/api). One canonical request per endpoint — edit query params, path params, or body inline to exercise other cases (filters, validation errors, etc.).",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -17,215 +17,77 @@
       "description": "Endpoints for the tool catalog.",
       "item": [
         {
-          "name": "GET /tools - list all (defaults)",
+          "name": "GET /tools — list",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/tools",
               "host": ["{{baseUrl}}"],
-              "path": ["tools"]
-            },
-            "description": "List tools with default pagination (page=1, limit=20) and default sort (name asc)."
-          },
-          "response": []
-        },
-        {
-          "name": "GET /tools - filter by department",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/tools?department=Engineering",
-              "host": ["{{baseUrl}}"],
               "path": ["tools"],
               "query": [
                 {
                   "key": "department",
                   "value": "Engineering",
-                  "description": "One of: Engineering, Sales, Marketing, HR, Finance, Operations, Design"
-                }
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "GET /tools - filter by status",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/tools?status=active",
-              "host": ["{{baseUrl}}"],
-              "path": ["tools"],
-              "query": [
+                  "description": "Engineering | Sales | Marketing | HR | Finance | Operations | Design",
+                  "disabled": true
+                },
                 {
                   "key": "status",
                   "value": "active",
-                  "description": "One of: active, deprecated, trial"
-                }
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "GET /tools - filter by category",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/tools?category=Design",
-              "host": ["{{baseUrl}}"],
-              "path": ["tools"],
-              "query": [
+                  "description": "active | deprecated | trial",
+                  "disabled": true
+                },
                 {
                   "key": "category",
-                  "value": "Design"
-                }
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "GET /tools - filter by cost range",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/tools?min_cost=10&max_cost=500",
-              "host": ["{{baseUrl}}"],
-              "path": ["tools"],
-              "query": [
-                { "key": "min_cost", "value": "10" },
-                { "key": "max_cost", "value": "500" }
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "GET /tools - sort by cost desc",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/tools?sort=cost&order=desc",
-              "host": ["{{baseUrl}}"],
-              "path": ["tools"],
-              "query": [
+                  "value": "Design",
+                  "description": "Exact category name (case-sensitive)",
+                  "disabled": true
+                },
+                {
+                  "key": "min_cost",
+                  "value": "10",
+                  "description": "Minimum monthly cost (>= 0)",
+                  "disabled": true
+                },
+                {
+                  "key": "max_cost",
+                  "value": "500",
+                  "description": "Maximum monthly cost (must be >= min_cost when both set)",
+                  "disabled": true
+                },
                 {
                   "key": "sort",
-                  "value": "cost",
-                  "description": "One of: cost, name, date"
+                  "value": "name",
+                  "description": "cost | name | date (default: name)",
+                  "disabled": true
                 },
                 {
                   "key": "order",
-                  "value": "desc",
-                  "description": "One of: asc, desc"
+                  "value": "asc",
+                  "description": "asc | desc (default: asc)",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number, 1-indexed (default: 1)",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Items per page, 1-100 (default: 20)",
+                  "disabled": true
                 }
               ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "GET /tools - pagination (page 2, limit 5)",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/tools?page=2&limit=5",
-              "host": ["{{baseUrl}}"],
-              "path": ["tools"],
-              "query": [
-                { "key": "page", "value": "2" },
-                { "key": "limit", "value": "5" }
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "GET /tools - combined filters",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/tools?department=Engineering&status=active&min_cost=0&max_cost=1000&sort=cost&order=desc&page=1&limit=10",
-              "host": ["{{baseUrl}}"],
-              "path": ["tools"],
-              "query": [
-                { "key": "department", "value": "Engineering" },
-                { "key": "status", "value": "active" },
-                { "key": "min_cost", "value": "0" },
-                { "key": "max_cost", "value": "1000" },
-                { "key": "sort", "value": "cost" },
-                { "key": "order", "value": "desc" },
-                { "key": "page", "value": "1" },
-                { "key": "limit", "value": "10" }
-              ]
             },
-            "description": "All filters and options combined in a single request."
+            "description": "Paginated list of tools with filters and sorting. All query params are optional — enable them in the Params tab to combine filters. Errors: 400 on invalid enum, max_cost < min_cost, unknown param (forbidNonWhitelisted)."
           },
           "response": []
         },
         {
-          "name": "GET /tools - 400 max_cost < min_cost",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/tools?min_cost=500&max_cost=100",
-              "host": ["{{baseUrl}}"],
-              "path": ["tools"],
-              "query": [
-                { "key": "min_cost", "value": "500" },
-                { "key": "max_cost", "value": "100" }
-              ]
-            },
-            "description": "Expects a 400 Bad Request: max_cost must be >= min_cost."
-          },
-          "response": []
-        },
-        {
-          "name": "GET /tools - 400 invalid enum",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/tools?department=Unknown",
-              "host": ["{{baseUrl}}"],
-              "path": ["tools"],
-              "query": [
-                { "key": "department", "value": "Unknown" }
-              ]
-            },
-            "description": "Expects a 400 Bad Request: department is not a valid enum value."
-          },
-          "response": []
-        },
-        {
-          "name": "GET /tools - 400 unknown param",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/tools?foo=bar",
-              "host": ["{{baseUrl}}"],
-              "path": ["tools"],
-              "query": [
-                { "key": "foo", "value": "bar" }
-              ]
-            },
-            "description": "Expects a 400 Bad Request: unknown query parameter (forbidNonWhitelisted)."
-          },
-          "response": []
-        },
-        {
-          "name": "GET /tools/:id - found",
+          "name": "GET /tools/:id — detail",
           "request": {
             "method": "GET",
             "header": [],
@@ -234,40 +96,12 @@
               "host": ["{{baseUrl}}"],
               "path": ["tools", "1"]
             },
-            "description": "Returns the full detail of tool 1, including 30-day usage metrics."
+            "description": "Full detail of a single tool, including 30-day usage metrics and total monthly cost. Errors: 400 if id is not a positive integer (PositiveIntPipe); 404 if the tool does not exist."
           },
           "response": []
         },
         {
-          "name": "GET /tools/:id - 404 not found",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/tools/999999",
-              "host": ["{{baseUrl}}"],
-              "path": ["tools", "999999"]
-            },
-            "description": "Expects a 404 Not Found when the tool ID does not exist."
-          },
-          "response": []
-        },
-        {
-          "name": "GET /tools/:id - 400 invalid id",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/tools/abc",
-              "host": ["{{baseUrl}}"],
-              "path": ["tools", "abc"]
-            },
-            "description": "Expects a 400 Bad Request: id must be a positive integer (PositiveIntPipe)."
-          },
-          "response": []
-        },
-        {
-          "name": "POST /tools - 201 created (full body)",
+          "name": "POST /tools — create",
           "request": {
             "method": "POST",
             "header": [
@@ -282,112 +116,12 @@
               "mode": "raw",
               "raw": "{\n  \"name\": \"Linear\",\n  \"description\": \"Issue tracking and project management\",\n  \"vendor\": \"Linear\",\n  \"website_url\": \"https://linear.app\",\n  \"category_id\": 2,\n  \"monthly_cost\": 8.0,\n  \"owner_department\": \"Engineering\"\n}"
             },
-            "description": "Creates a new tool with all fields. Status is set to 'active' server-side."
+            "description": "Creates a tool. Required: name, vendor, category_id, monthly_cost, owner_department. Optional: description, website_url. Status is forced to 'active' server-side. Errors: 400 on body validation or unknown category_id (details.category_id); 409 if a tool with the same name (case-insensitive) already exists."
           },
           "response": []
         },
         {
-          "name": "POST /tools - 201 created (minimal body)",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/tools",
-              "host": ["{{baseUrl}}"],
-              "path": ["tools"]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"MinimalTool\",\n  \"vendor\": \"Acme\",\n  \"category_id\": 1,\n  \"monthly_cost\": 0,\n  \"owner_department\": \"Operations\"\n}"
-            },
-            "description": "Creates a tool with only required fields (description and website_url omitted)."
-          },
-          "response": []
-        },
-        {
-          "name": "POST /tools - 400 missing required fields",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/tools",
-              "host": ["{{baseUrl}}"],
-              "path": ["tools"]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Incomplete\"\n}"
-            },
-            "description": "Expects a 400 Bad Request: vendor, category_id, monthly_cost, owner_department are required."
-          },
-          "response": []
-        },
-        {
-          "name": "POST /tools - 400 category does not exist",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/tools",
-              "host": ["{{baseUrl}}"],
-              "path": ["tools"]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"GhostCategoryTool\",\n  \"vendor\": \"Acme\",\n  \"category_id\": 999999,\n  \"monthly_cost\": 5,\n  \"owner_department\": \"Engineering\"\n}"
-            },
-            "description": "Expects a 400 Bad Request with details.category_id when the referenced category does not exist."
-          },
-          "response": []
-        },
-        {
-          "name": "POST /tools - 409 name already exists",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/tools",
-              "host": ["{{baseUrl}}"],
-              "path": ["tools"]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"figma\",\n  \"vendor\": \"Figma Inc.\",\n  \"category_id\": 1,\n  \"monthly_cost\": 15,\n  \"owner_department\": \"Design\"\n}"
-            },
-            "description": "Expects a 409 Conflict: case-insensitive name collision (e.g. 'figma' vs existing 'Figma')."
-          },
-          "response": []
-        },
-        {
-          "name": "POST /tools - 400 invalid website_url",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/tools",
-              "host": ["{{baseUrl}}"],
-              "path": ["tools"]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"BadUrlTool\",\n  \"vendor\": \"Acme\",\n  \"website_url\": \"not-a-url\",\n  \"category_id\": 1,\n  \"monthly_cost\": 5,\n  \"owner_department\": \"Engineering\"\n}"
-            },
-            "description": "Expects a 400 Bad Request: website_url must be a valid URL."
-          },
-          "response": []
-        },
-        {
-          "name": "PATCH /tools/:id - 200 partial update",
+          "name": "PATCH /tools/:id — update",
           "request": {
             "method": "PATCH",
             "header": [
@@ -400,89 +134,9 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"monthly_cost\": 12.5,\n  \"owner_department\": \"Engineering\"\n}"
+              "raw": "{\n  \"monthly_cost\": 12.5,\n  \"status\": \"deprecated\"\n}"
             },
-            "description": "Updates only the provided fields. Other fields are left untouched."
-          },
-          "response": []
-        },
-        {
-          "name": "PATCH /tools/:id - 200 empty body (no-op)",
-          "request": {
-            "method": "PATCH",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/tools/1",
-              "host": ["{{baseUrl}}"],
-              "path": ["tools", "1"]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{}"
-            },
-            "description": "Empty body is valid and returns 200 with the current tool (no fields change; updated_at is bumped via @updatedAt)."
-          },
-          "response": []
-        },
-        {
-          "name": "PATCH /tools/:id - 404 tool not found",
-          "request": {
-            "method": "PATCH",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/tools/999999",
-              "host": ["{{baseUrl}}"],
-              "path": ["tools", "999999"]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"monthly_cost\": 10\n}"
-            },
-            "description": "Expects a 404 Not Found when the tool ID does not exist."
-          },
-          "response": []
-        },
-        {
-          "name": "PATCH /tools/:id - 400 category does not exist",
-          "request": {
-            "method": "PATCH",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/tools/1",
-              "host": ["{{baseUrl}}"],
-              "path": ["tools", "1"]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"category_id\": 999999\n}"
-            },
-            "description": "Expects a 400 Bad Request with details.category_id when the new category does not exist."
-          },
-          "response": []
-        },
-        {
-          "name": "PATCH /tools/:id - 400 name is forbidden",
-          "request": {
-            "method": "PATCH",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/tools/1",
-              "host": ["{{baseUrl}}"],
-              "path": ["tools", "1"]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"NewName\"\n}"
-            },
-            "description": "Expects a 400 Bad Request: name is not allowed in updates (rejected by forbidNonWhitelisted since UpdateToolRequestDto omits name)."
+            "description": "Partial update — all fields optional. Editable: description, vendor, website_url, category_id, monthly_cost, owner_department, status. The 'name' field is not editable (rejected by forbidNonWhitelisted). An empty body {} is a valid no-op (returns 200 with the current tool; updated_at is bumped via @updatedAt). Errors: 404 if the tool does not exist; 400 on body validation or unknown category_id (details.category_id)."
           },
           "response": []
         }
