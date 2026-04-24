@@ -68,11 +68,12 @@ export class ToolService {
 
 
   private getDateWindow(): DateWindow {
-    const today = new Date();
-    const since = new Date(today);
-    since.setDate(since.getDate() - 30);
-  return { since, until: today };
-}
+    const until = new Date();
+    until.setUTCHours(0, 0, 0, 0);
+    const since = new Date(until);
+    since.setUTCDate(since.getUTCDate() - 30);
+    return { since, until };
+  }
 
   private roundTo2Decimals(value: number): number {
     return Math.round(value * 100) / 100;
