@@ -63,6 +63,7 @@ export class CreateToolRequestDto {
   @Type(() => Number)
   @IsInt()
   @IsPositive()
+  @IsNotEmpty()
   category_id!: number;
 
   @ApiProperty({
@@ -74,6 +75,7 @@ export class CreateToolRequestDto {
   @Type(() => Number)
   @IsNumber({ maxDecimalPlaces: 2 })
   @Min(0)
+  @IsNotEmpty()
   monthly_cost!: number;
 
   @ApiProperty({
@@ -82,5 +84,6 @@ export class CreateToolRequestDto {
     description: 'Department that owns the tool.',
   })
   @IsEnum(DepartmentType)
+  @IsNotEmpty()
   owner_department!: DepartmentType;
 }
