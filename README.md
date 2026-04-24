@@ -229,3 +229,30 @@ Cette limitation est volontairement conservée pour respecter le contrat d'API, 
 **Limitation connue sur le dataset fourni :** les logs d'usage seedés sont datés de mai à juillet 2025. Testé après le 30 août 2025, la fenêtre glissante 30 jours ne contiendra plus de logs et toutes les métriques retourneront 0. Ce comportement est cohérent avec l'implémentation correcte de la fenêtre ; il ne reflète pas un bug. Pour tester les métriques avec le seed actuel, il faut soit simuler la date système, soit régénérer des logs avec des dates récentes.
 
 **Évolution possible :** un endpoint dédié aux analyses temporelles (ex. `GET /api/tools/:id/usage?from=X&to=Y`) serait pertinent pour couvrir le besoin de reporting trimestriel évoqué par Marcus (Finance Controller) dans les personas.
+
+### Out-of-scope user stories (identified for future iterations)
+
+**Marcus — "Export data for Excel analysis"**
+
+Mentioned in persona descriptions but not listed in the CDC's "Endpoints Obligatoires" 
+(Section 3.1). The 4 endpoints explicitly specified in the spec are GET list, GET detail, 
+POST, and PUT — no export endpoint.
+
+If prioritized in a future iteration, two implementations would be viable:
+- `GET /api/tools/export?format=csv` — streams a CSV (standard, Excel-compatible via UTF-8 BOM)
+- `GET /api/tools/export?format=xlsx` — generates an XLSX file (native format, requires `exceljs` or `xlsx` lib)
+
+CSV is recommended as the MVP: lighter, no extra dependency, opens natively in Excel.
+
+## User stories coverage
+
+| Persona | User Story | Implementation |
+|---|---|---|
+| Sarah Chen (IT Manager) | List tools with filters | `GET /api/tools` |
+| Sarah Chen (IT Manager) | Visualize tool usage metrics | `GET /api/tools/:id` (strict CDC interpretation — see "Metrics visibility" note) |
+| Marcus Rodriguez (Finance Controller) | Consult full tool details (cost, active users) | `GET /api/tools/:id` (covers cost breakdown and active users count) |
+| Marcus Rodriguez (Finance Controller) | Export data for Excel analysis | ⚠️ Out of CDC technical scope — see "Out-of-scope user stories" section |
+| Lisa Wang (HR Director) | Add a new tool to the catalog | `POST /api/tools` |
+| Lisa Wang (HR Director) | Validate submitted tool information (cost, vendor, URL, etc.) | Input validation via DTO + class-validator on `POST /api/tools` |
+| David Kumar (Platform Admin) | Update existing tool information | `PUT /api/tools/:id` |
+| David Kumar (Platform Admin) | Change tool statuses (active → deprecated) | `PUT /api/tools/:id` (with `status` field) |
