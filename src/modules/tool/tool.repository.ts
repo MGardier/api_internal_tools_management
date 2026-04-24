@@ -114,6 +114,7 @@ export class ToolRepository {
         websiteUrl: dto.website_url,
         monthlyCost: dto.monthly_cost,
         ownerDepartment: dto.owner_department,
+        status: dto.status,
         ...(dto.category_id && {
           category: { connect: { id: dto.category_id } },
         }),
